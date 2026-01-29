@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "993776643584",
+    "project_id": "expensex-c4815",
+    "storage_bucket": "expensex-c4815.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993776643584:android:5b0dd63ba815cae32632e5",
+        "android_client_info": {
+          "package_name": "com.example.expensex"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD8mKFoZoHZGSC8kpWTT83td3J7ZSbuRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
