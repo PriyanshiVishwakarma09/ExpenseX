@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "993776643584",
-    "project_id": "expensex-c4815",
-    "storage_bucket": "expensex-c4815.firebasestorage.app"
+    "project_number": "365034765268",
+    "project_id": "expense-18ffb",
+    "storage_bucket": "expense-18ffb.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:993776643584:android:5b0dd63ba815cae32632e5",
+        "mobilesdk_app_id": "1:365034765268:android:d2217b598b719943d3b441",
         "android_client_info": {
           "package_name": "com.example.expensex"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDD8mKFoZoHZGSC8kpWTT83td3J7ZSbuRE"
+          "current_key": "AIzaSyAA1KCfV6H0NHJB4RuP2njPAjyFRjLfWkQ"
         }
       ],
       "services": {
