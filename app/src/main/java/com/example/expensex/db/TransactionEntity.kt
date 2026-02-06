@@ -2,6 +2,7 @@ package com.example.expensex.db
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "transactions" ,
@@ -17,6 +18,11 @@ import androidx.room.PrimaryKey
             childColumns = ["categoryId"],
             onDelete = ForeignKey.SET_NULL
         )
+    ],
+    indices = [
+        Index(value = ["id"]),
+        Index(value = ["accountId"]),
+        Index(value = ["categoryId"])
     ]
 )
 data class TransactionEntity (

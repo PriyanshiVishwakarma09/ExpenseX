@@ -38,10 +38,8 @@ fun SplashScreen(){
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
-
-                )
+            )
         }
-
         Column(modifier = Modifier.fillMaxWidth()
             .fillMaxHeight(),
             verticalArrangement = Arrangement.Center,

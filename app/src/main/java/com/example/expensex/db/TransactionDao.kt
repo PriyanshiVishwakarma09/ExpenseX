@@ -16,6 +16,7 @@ interface TransactionDao {
     """)
     suspend fun getTotalIncome(uid: String): Double?
 
+
     @Query("""
         SELECT SUM(amount) FROM transactions
         WHERE userId = :uid AND type = 'EXPENSE'
@@ -38,6 +39,7 @@ interface TransactionDao {
         GROUP BY categoryId
     """)
     suspend fun getCategoryStats(uid : String) : List<CategorySum>
+
 }
 
 
