@@ -32,6 +32,7 @@ interface TransactionDao {
     """)
     suspend fun getRecent(uid : String) : List<TransactionEntity>
 
+
     @Query("""
         SELECT categoryId, SUM(amount) as total
         FROM transactions
