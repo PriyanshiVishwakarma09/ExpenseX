@@ -5,11 +5,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import jakarta.inject.Inject
 
-class AuthRepository {
-    private val auth = FirebaseAuth.getInstance()
-    private val db = FirebaseFirestore.getInstance()
-    fun register(
+class AuthRepository @Inject constructor(
+    private val auth : FirebaseAuth,
+    private val db : FirebaseFirestore
+){    fun register(
         name : String ,
         email : String ,
         password : String ,

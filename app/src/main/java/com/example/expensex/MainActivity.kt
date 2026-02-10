@@ -19,9 +19,13 @@ import com.example.expensex.screens.WalletScreen
 import com.example.expensex.ui.theme.ExpenseXTheme
 import com.example.expensex.viewmodel.walletViewModel
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.HiltAndroidApp
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {

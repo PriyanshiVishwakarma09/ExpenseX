@@ -4,9 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.example.expensex.repository.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import androidx.lifecycle.ViewModel
+import javax.inject.Inject
 
-class AuthViewModel {
-    private val repo = AuthRepository()
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val repo : AuthRepository
+) : ViewModel(){
 
     var loading by mutableStateOf(false)
         private set

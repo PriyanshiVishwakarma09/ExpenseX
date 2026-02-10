@@ -3,8 +3,9 @@ package com.example.expensex.repository
 import com.example.expensex.db.AccountDao
 import com.example.expensex.db.TransactionDao
 import com.example.expensex.db.TransactionEntity
+import jakarta.inject.Inject
 
-class WalletRepository (
+class WalletRepository @Inject constructor (
     private val accountDao: AccountDao ,
     private val transactionDao: TransactionDao
 ){

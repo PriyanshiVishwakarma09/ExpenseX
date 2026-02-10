@@ -8,9 +8,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensex.repository.WalletRepository
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.HiltAndroidApp
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
-class walletViewModel(
+@HiltViewModel
+class walletViewModel @Inject constructor(
     private val repo : WalletRepository
 ) : ViewModel() {
 
