@@ -5,7 +5,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class AuthRepository @Inject constructor(
     private val auth : FirebaseAuth,

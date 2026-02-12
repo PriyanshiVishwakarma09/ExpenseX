@@ -17,17 +17,4 @@ abstract class ExpenseDatabase : RoomDatabase() {
     abstract fun accountDao(): AccountDao
     abstract fun categoryDao(): CategoryDao
     abstract fun transactionDao(): TransactionDao
-
-//    companion object {
-//        @Volatile private var INSTANCE: ExpenseDatabase? = null
-//        fun getInstance(context: Context): ExpenseDatabase {
-//            return INSTANCE ?: synchronized(this) {
-//                Room.databaseBuilder(
-//                    context.applicationContext,
-//                    ExpenseDatabase::class.java,
-//                    "expense_db"
-//                ).build().also { INSTANCE = it }
-//            }
-//        }
-//    }
 }

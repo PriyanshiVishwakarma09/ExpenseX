@@ -3,46 +3,84 @@ package com.example.expensex.viewmodel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.expensex.db.AccountDao
+import com.example.expensex.db.CategoryDao
+import com.example.expensex.db.CategoryEntity
+import com.example.expensex.db.CategorySum
+import com.example.expensex.db.TransactionDao
+import com.example.expensex.db.TransactionEntity
 import com.example.expensex.repository.WalletRepository
-import com.google.firebase.auth.FirebaseAuth
-import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 
+
 @HiltViewModel
-class walletViewModel @Inject constructor(
-    private val repo : WalletRepository
+class WalletViewModel @Inject constructor(
+    private val repo: WalletRepository,
+    private val categoryDao: CategoryDao,
+    private val transactionDao: TransactionDao,
+    private val accountDao: AccountDao,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private val uid: String = savedStateHandle["uid"]!!
+
     var balance by mutableStateOf(0.0)
-        private set  //setter
+        private set
 
-    private var accountId : Int ? = null
+    var incomeTotal by mutableStateOf(0.0)
+        private set
 
+    var expenseTotal by mutableStateOf(0.0)
+        private set
 
-    private val uid =
-        FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    var recent by mutableStateOf<List<TransactionEntity>>(emptyList())
+        private set
 
-    fun load(){
+    var categories by mutableStateOf<List<CategoryEntity>>(emptyList())
+        private set
+
+    var categoryStats by mutableStateOf<List<CategorySum>>(emptyList())
+        private set
+
+    var loading by mutableStateOf(false)
+        private set
+
+    fun load(type: String = "INCOME") {
         viewModelScope.launch {
-            val acc= repo.getMainAccount(uid)
-            if(acc != null){
-                balance = acc.balance
-                accountId = acc.id
-            }
+            loading = true
+
+            val account = repo.getMainAccount(uid)
+            balance = account?.balance ?: 0.0
+
+            incomeTotal = transactionDao.getTotalIncome(uid) ?: 0.0
+            expenseTotal = transactionDao.getTotalExpense(uid) ?: 0.0
+
+            recent = transactionDao.getRecent(uid)
+            categories = categoryDao.getCategories(uid, type)
+            categoryStats = transactionDao.getCategoryStats(uid)
+
+            loading = false
         }
     }
 
-    fun addIncome(title : String , amount : Double){
-        val id = accountId ?: return
+    fun addIncome(title: String, amount: Double, categoryId: Int?) {
         viewModelScope.launch {
-            repo.addIncome(uid, title , amount , id)
-            balance += amount
+            val account = repo.getMainAccount(uid) ?: return@launch //get the user's main account if it doesn't exist , stop this function immediately .
+            repo.addIncome(uid, title, amount, account.id, categoryId)
+            load("INCOME")
         }
     }
 
+    fun addExpense(title: String, amount: Double, categoryId: Int) {
+        viewModelScope.launch {
+            val account = repo.getMainAccount(uid) ?: return@launch
+            repo.addExpense(uid, title, amount, account.id, categoryId)
+            load("EXPENSE")
+        }
+    }
 }

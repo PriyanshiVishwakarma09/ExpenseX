@@ -1,10 +1,24 @@
 package com.example.expensex.screens
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,46 +28,117 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.expensex.repository.WalletRepository
-import com.example.expensex.viewmodel.walletViewModel
+import com.example.expensex.db.CategoryEntity
+import com.example.expensex.viewmodel.WalletViewModel
+
 
 @Composable
-fun WalletScreen(vm : walletViewModel) {
+fun AddTransactionScreen(vm: WalletViewModel) {
+    var type by remember { mutableStateOf("EXPENSE") }
+    var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
-    var title by remember { mutableStateOf("Initial Income") }
+    var selectedCategory by remember { mutableStateOf<CategoryEntity?>(null) }
 
-    LaunchedEffect(Unit) {
-        vm.load()
+    LaunchedEffect(type) {
+        vm.load(type)
+        selectedCategory = null
     }
 
-    Column(modifier = Modifier.padding((20.dp))) {
-        Text("Total Balance" , fontSize = 20.sp)
-        Text("₹ ${vm.balance}" , fontSize = 32.sp)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(20.dp)
+    ) {
+
+        Row {
+            Button(
+                onClick = { type = "INCOME" },
+                colors = ButtonDefaults.buttonColors(
+                    if (type == "INCOME") MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondary
+                )
+            ) { Text("Income") }
+
+            Spacer(Modifier.width(10.dp))
+
+            Button(
+                onClick = { type = "EXPENSE" },
+                colors = ButtonDefaults.buttonColors(
+                    if (type == "EXPENSE") MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondary
+                )
+            ) { Text("Expense") }
+        }
 
         Spacer(Modifier.height(20.dp))
 
         OutlinedTextField(
-            value = title ,
-            onValueChange = {title = it},
-            label = {Text("Source")}
+            value = title,
+            onValueChange = { title = it },
+            label = { Text("Name") },
+            modifier = Modifier.fillMaxWidth()
         )
+
+        Spacer(Modifier.height(12.dp))
 
         OutlinedTextField(
             value = amount,
             onValueChange = { amount = it },
-            label = { Text("Amount") }
+            label = { Text("Amount") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
 
-        Button(onClick = {
-            vm.addIncome( title, amount.toDouble())
-            amount = ""
-        }) {
-            Text("Add Income")
+        Spacer(Modifier.height(12.dp))
+
+        var expanded by remember { mutableStateOf(false) }
+
+        Box {
+            OutlinedTextField(
+                value = selectedCategory?.name ?: "Select Category",
+                onValueChange = {},
+                modifier = Modifier.fillMaxWidth(),
+                readOnly = true,
+                trailingIcon = {
+                    Icon(
+                        Icons.Default.ArrowDropDown, null,
+                        Modifier.clickable { expanded = true })
+                }
+            )
+
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                vm.categories.forEach {
+                    DropdownMenuItem(
+                        text = { Text(it.name) },
+                        onClick = {
+                            selectedCategory = it
+                            expanded = false
+                        }
+                    )
+                }
+            }
         }
 
+        Spacer(Modifier.height(30.dp))
+
+        Button(
+            onClick = {
+                val amt = amount.toDoubleOrNull() ?: return@Button
+                if (type == "INCOME") {
+                    vm.addIncome(title, amt, selectedCategory?.id)
+                } else {
+                    vm.addExpense(title, amt, selectedCategory!!.id)
+                }
+                title = ""
+                amount = ""
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Add $type")
+        }
     }
 }
+
+

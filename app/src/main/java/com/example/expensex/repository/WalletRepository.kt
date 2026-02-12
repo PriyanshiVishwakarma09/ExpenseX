@@ -5,29 +5,51 @@ import com.example.expensex.db.TransactionDao
 import com.example.expensex.db.TransactionEntity
 import jakarta.inject.Inject
 
-class WalletRepository @Inject constructor (
-    private val accountDao: AccountDao ,
+class WalletRepository @Inject constructor(
+    private val accountDao: AccountDao,
     private val transactionDao: TransactionDao
-){
-    suspend fun getMainAccount(uid : String) = accountDao.getMainAccounts(uid)
+) {
+
+    suspend fun getMainAccount(uid: String) =
+        accountDao.getMainAccounts(uid)
 
     suspend fun addIncome(
-        uid : String ,
-        title : String ,
-        amount : Double,
-        accountId : Int
-    ){
+        uid: String,
+        title: String,
+        amount: Double,
+        accountId: Int,
+        categoryId: Int?
+    ) {
         val tx = TransactionEntity(
-            userId = uid ,
-            title = title ,
-            amount = amount ,
-            type = "INCOME" ,
+            userId = uid,
+            title = title,
+            amount = amount,
+            type = "INCOME",
             date = System.currentTimeMillis(),
-            accountId = accountId ,
-            categoryId = null
+            accountId = accountId,
+            categoryId = categoryId
         )
-
         transactionDao.insert(tx)
-        accountDao.addBalance(accountId , amount)
+        accountDao.addBalance(accountId, amount)
+    }
+
+    suspend fun addExpense(
+        uid: String,
+        title: String,
+        amount: Double,
+        accountId: Int,
+        categoryId: Int
+    ) {
+        val tx = TransactionEntity(
+            userId = uid,
+            title = title,
+            amount = amount,
+            type = "EXPENSE",
+            date = System.currentTimeMillis(),
+            accountId = accountId,
+            categoryId = categoryId
+        )
+        transactionDao.insert(tx)
+        accountDao.subtractBalance(accountId, amount)
     }
 }
