@@ -14,6 +14,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,11 +26,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.expensex.R
+import com.example.expensex.model.Routes
+import kotlinx.coroutines.delay
 
-@Preview(showBackground = true)
 @Composable
-fun SplashScreen(){
+fun SplashScreen(navController: NavController){
+    LaunchedEffect(true){
+        delay(2000)
+        navController.navigate(Routes.LOGIN){
+            popUpTo(Routes.SPLASH){
+                inclusive = true
+            }
+        }
+    }
     Column(modifier = Modifier.fillMaxSize()
         .background(color = Color(0xFFE3F2FD))) {
         Column(modifier = Modifier.fillMaxWidth()) {

@@ -20,19 +20,16 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensex.db.TransactionEntity
 import com.example.expensex.viewmodel.HomeScreenViewModel
-import com.example.expensex.viewmodel.WalletViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @Composable
 fun HomeScreen(vm: HomeScreenViewModel) {
-
     LaunchedEffect(Unit) {
         vm.loadDashboard()
     }
@@ -81,6 +78,7 @@ fun HomeScreen(vm: HomeScreenViewModel) {
             modifier = Modifier.padding(start = 16.dp, top = 12.dp),
             fontWeight = FontWeight.Bold
         )
+
 
         LazyColumn {
             items(vm.recent) { tx ->

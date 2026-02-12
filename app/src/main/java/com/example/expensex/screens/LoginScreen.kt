@@ -23,13 +23,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.TextButton
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
+import com.example.expensex.SessionManager
+import com.example.expensex.model.Routes
 import com.example.expensex.viewmodel.AuthViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoginScreen(
     vm : AuthViewModel,
-    onNavigateToRegister: () -> Unit ,
-    onLoginSuccess : () -> Unit
+    navController: NavController,
+    onNavigateToRegister: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -56,7 +60,14 @@ fun LoginScreen(
                 onClick = {
                     vm.login(email, password) { ok, msg ->
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-                        if (ok) onLoginSuccess()
+                        if (ok) {
+                            val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                            SessionManager(context).saveUid(uid)
+
+                            navController.navigate("${Routes.HOME}/$uid") {
+                                popUpTo(Routes.LOGIN) { inclusive = true }
+                            }
+                        }
                     }
                 }
             ) {

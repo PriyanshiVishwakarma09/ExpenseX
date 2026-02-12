@@ -10,7 +10,7 @@ import com.example.expensex.db.TransactionDao
 import com.example.expensex.db.TransactionEntity
 import com.example.expensex.repository.WalletRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.launch
 
 
