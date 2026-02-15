@@ -1,12 +1,15 @@
 package com.example.expensex.repository
 
 import com.example.expensex.db.AccountDao
+import com.example.expensex.db.CategoryDao
+import com.example.expensex.db.CategoryEntity
 import com.example.expensex.db.TransactionDao
 import com.example.expensex.db.TransactionEntity
 import jakarta.inject.Inject
 
 class WalletRepository @Inject constructor(
     private val accountDao: AccountDao,
+    private val categoryDao: CategoryDao,
     private val transactionDao: TransactionDao
 ) {
 
@@ -52,4 +55,16 @@ class WalletRepository @Inject constructor(
         transactionDao.insert(tx)
         accountDao.subtractBalance(accountId, amount)
     }
+
+    fun getCategories(uid: String, type: String) =
+        categoryDao.getCategories(uid, type)
+
+    suspend fun addCategory(cat: CategoryEntity) =
+        categoryDao.insert(cat)
+
+    suspend fun deleteCategory(cat: CategoryEntity) =
+        categoryDao.delete(cat)
 }
+
+
+

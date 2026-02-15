@@ -1,48 +1,41 @@
 package com.example.expensex.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.expensex.SessionManager
 import com.example.expensex.db.TransactionDao
-import com.example.expensex.db.TransactionEntity
 import com.example.expensex.repository.WalletRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
 
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val repo: WalletRepository,
     private val transactionDao: TransactionDao,
-    savedStateHandle: SavedStateHandle
+    sessionManager: SessionManager
 ) : ViewModel() {
 
-    private val uid: String = savedStateHandle["uid"]!!
+    private val uid = sessionManager.getUid()
+        ?: throw IllegalStateException("User not logged in")
 
-    var balance by mutableStateOf(0.0)
-        private set
+    val income = transactionDao.getTotalIncome(uid)
+        .map { it ?: 0.0 }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0.0)
 
-    var incomeTotal by mutableStateOf(0.0)
-        private set
+    val expense = transactionDao.getTotalExpense(uid)
+        .map { it ?: 0.0 }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0.0)
 
-    var expenseTotal by mutableStateOf(0.0)
-        private set
+    val recent = transactionDao.getRecent(uid)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    var recent by mutableStateOf<List<TransactionEntity>>(emptyList())
-        private set
+    val balance = combine(income, expense) { inc, exp ->
+        inc - exp
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), 0.0)
 
-    fun loadDashboard() {
-        viewModelScope.launch {
-            val account = repo.getMainAccount(uid)
-            balance = account?.balance ?: 0.0
-
-            incomeTotal = transactionDao.getTotalIncome(uid) ?: 0.0
-            expenseTotal = transactionDao.getTotalExpense(uid) ?: 0.0
-            recent = transactionDao.getRecent(uid)
-        }
     }
-}

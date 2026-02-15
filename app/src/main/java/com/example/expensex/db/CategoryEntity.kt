@@ -8,5 +8,6 @@ data class CategoryEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val userId: String,
     val name: String,  // Food , Salary , Travel
-    val type: String // "Income or Expense "
+    val type: String, // "Income or Expense "
+    val icon : String
 )

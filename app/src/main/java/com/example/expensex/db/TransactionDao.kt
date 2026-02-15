@@ -3,6 +3,7 @@ package com.example.expensex.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -14,14 +15,14 @@ interface TransactionDao {
         SELECT SUM(amount) FROM transactions 
         WHERE userId = :uid AND type = 'INCOME'
     """)
-    suspend fun getTotalIncome(uid: String): Double?
+    fun getTotalIncome(uid: String): Flow<Double?>
 
 
     @Query("""
         SELECT SUM(amount) FROM transactions
         WHERE userId = :uid AND type = 'EXPENSE'
     """)
-    suspend fun getTotalExpense(uid : String) : Double ?
+    fun getTotalExpense(uid : String) : Flow<Double?>
 
 
     @Query("""
@@ -30,7 +31,7 @@ interface TransactionDao {
         ORDER BY date DESC
         LIMIT 10
     """)
-    suspend fun getRecent(uid : String) : List<TransactionEntity>
+    fun getRecent(uid : String) : Flow<List<TransactionEntity>>
 
 
     @Query("""

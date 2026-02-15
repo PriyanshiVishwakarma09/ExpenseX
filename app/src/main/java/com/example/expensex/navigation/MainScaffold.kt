@@ -22,59 +22,68 @@ import com.example.expensex.screens.AddTransactionScreen
 import com.example.expensex.screens.HomeScreen
 import com.example.expensex.screens.ProfileScreen
 import com.example.expensex.screens.StatsScreen
+import com.example.expensex.viewmodel.HomeScreenViewModel
+import com.example.expensex.viewmodel.WalletViewModel
 
 @Composable
-fun MainScaffold(uid: String) {
+fun MainScaffold(
+    uid: String,
+    homeVm: HomeScreenViewModel
+) {
     val navController = rememberNavController()
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    navController.navigate("${Routes.ADD}/$uid")
-                }
-            ) {
-                Icon(Icons.Default.Add, null)
-            }
+                onClick = { navController.navigate(Routes.ADD) }
+            ) { Icon(Icons.Default.Add, null) }
         },
-        bottomBar = {
-            BottomBar(navController, uid)
-        }
+        bottomBar = { BottomBar(navController, uid) }
     ) { padding ->
 
         NavHost(
             navController = navController,
-            startDestination = "${Routes.HOME}/$uid",
+            startDestination = Routes.HOME,
             modifier = Modifier.padding(padding)
         ) {
 
-            composable("${Routes.HOME}/{uid}") { HomeRoot() }
-            composable("${Routes.WALLET}/{uid}") { WalletRoot() }
-            composable("${Routes.STATS}/{uid}") { StatsRoot() }
-            composable("${Routes.PROFILE}/{uid}") { ProfileRoot() }
-            composable("${Routes.ADD}/{uid}") { AddRoot() }
+            composable(Routes.HOME) {
+                HomeScreen(homeVm)
+            }
+
+            composable(Routes.WALLET) {
+                val vm: WalletViewModel = hiltViewModel()
+                AddTransactionScreen(vm)
+            }
+
+            composable(Routes.STATS) { StatsScreen() }
+            composable(Routes.PROFILE) { ProfileScreen() }
+
+            composable(Routes.ADD) {
+                AddTransactionScreen(hiltViewModel())
+            }
         }
     }
 }
-
-@Composable fun HomeRoot() { HomeScreen(hiltViewModel()) }
-@Composable fun WalletRoot() { AddTransactionScreen(hiltViewModel()) }
-@Composable fun StatsRoot() { StatsScreen() }
-@Composable fun ProfileRoot() { ProfileScreen() }
-@Composable fun AddRoot() { AddTransactionScreen(hiltViewModel()) }
-
-
 @Composable
 fun BottomBar(nav: NavController, uid: String) {
+
     val items = listOf(Routes.HOME, Routes.WALLET, Routes.STATS, Routes.PROFILE)
+    val currentRoute =
+        nav.currentBackStackEntry?.destination?.route
 
     NavigationBar {
-        items.forEach {
+        items.forEach { route ->
             NavigationBarItem(
-                selected = false,
-                onClick = { nav.navigate("$it/$uid") },
+                selected = currentRoute == route,
+                onClick = {
+                    nav.navigate(route) {
+                        popUpTo(Routes.HOME)
+                        launchSingleTop = true
+                    }
+                },
                 icon = { Icon(Icons.Default.Home, null) },
-                label = { Text(it) }
+                label = { Text(route) }
             )
         }
     }

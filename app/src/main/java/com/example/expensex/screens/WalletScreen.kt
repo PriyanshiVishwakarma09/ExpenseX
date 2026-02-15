@@ -23,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +36,17 @@ import com.example.expensex.viewmodel.WalletViewModel
 
 
 @Composable
-fun AddTransactionScreen(vm: WalletViewModel) {
+fun AddTransactionScreen(vm: WalletViewModel){
     var type by remember { mutableStateOf("EXPENSE") }
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<CategoryEntity?>(null) }
+
+    LaunchedEffect(Unit) {
+        vm.ensureDefaultCategories {
+            vm.load(type)
+        }
+    }
 
     LaunchedEffect(type) {
         vm.load(type)
@@ -96,31 +103,49 @@ fun AddTransactionScreen(vm: WalletViewModel) {
         var expanded by remember { mutableStateOf(false) }
 
         Box {
+
             OutlinedTextField(
                 value = selectedCategory?.name ?: "Select Category",
                 onValueChange = {},
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded = true },
                 readOnly = true,
                 trailingIcon = {
                     Icon(
-                        Icons.Default.ArrowDropDown, null,
-                        Modifier.clickable { expanded = true })
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = null,
+                        modifier = Modifier.clickable { expanded = true }
+                    )
                 }
             )
 
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                vm.categories.forEach {
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                val categories by vm.categories.collectAsState()
+
+                if (categories.isEmpty()) {
                     DropdownMenuItem(
-                        text = { Text(it.name) },
+                        text = { Text("No categories") },
+                        onClick = { expanded = false }
+                    )
+                }
+
+                categories.forEach { category ->
+                    DropdownMenuItem(
+                        text = { Text(category.name) },
                         onClick = {
-                            selectedCategory = it
+                            selectedCategory = category
                             expanded = false
                         }
                     )
                 }
             }
         }
-
         Spacer(Modifier.height(30.dp))
 
         Button(
@@ -129,10 +154,12 @@ fun AddTransactionScreen(vm: WalletViewModel) {
                 if (type == "INCOME") {
                     vm.addIncome(title, amt, selectedCategory?.id)
                 } else {
-                    vm.addExpense(title, amt, selectedCategory!!.id)
+                    val catId = selectedCategory?.id ?: return@Button
+                    vm.addExpense(title, amt, catId)
                 }
                 title = ""
                 amount = ""
+                selectedCategory = null
             },
             modifier = Modifier.fillMaxWidth()
         ) {

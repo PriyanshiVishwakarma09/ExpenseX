@@ -86,4 +86,5 @@ dependencies {
 // Hilt + Compose
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
 }

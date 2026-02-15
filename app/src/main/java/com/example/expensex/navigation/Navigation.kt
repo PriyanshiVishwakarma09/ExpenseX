@@ -14,6 +14,7 @@ import com.example.expensex.screens.SplashScreen
 import com.example.expensex.viewmodel.AuthViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.example.expensex.screens.RegisterScreen
+import com.example.expensex.viewmodel.HomeScreenViewModel
 
 @Composable
 fun Navigation() {
@@ -46,7 +47,10 @@ fun Navigation() {
             arguments = listOf(navArgument("uid") { type = NavType.StringType })
         ) { backStack ->
             val uid = backStack.arguments?.getString("uid")!!
-            MainScaffold(uid)
+            val homeVm: HomeScreenViewModel =
+                hiltViewModel(backStack)
+
+            MainScaffold(uid, homeVm)
         }
     }
 }

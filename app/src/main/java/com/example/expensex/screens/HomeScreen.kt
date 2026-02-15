@@ -17,6 +17,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -30,10 +32,11 @@ import java.util.Locale
 
 @Composable
 fun HomeScreen(vm: HomeScreenViewModel) {
-    LaunchedEffect(Unit) {
-        vm.loadDashboard()
-    }
 
+    val balance by vm.balance.collectAsState()
+    val income by vm.income.collectAsState()
+    val expense by vm.expense.collectAsState()
+    val recent by vm.recent.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +52,7 @@ fun HomeScreen(vm: HomeScreenViewModel) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Total Balance", color = Color.White)
                 Text(
-                    "₹ ${vm.balance}",
+                    "₹ $balance",
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -63,11 +66,11 @@ fun HomeScreen(vm: HomeScreenViewModel) {
                 ) {
                     Column {
                         Text("Income", color = Color.White)
-                        Text("₹ ${vm.incomeTotal}", color = Color.Green)
+                        Text("₹ $income", color = Color.Green)
                     }
                     Column {
                         Text("Expenses", color = Color.White)
-                        Text("₹ ${vm.expenseTotal}", color = Color.Red)
+                        Text("₹ $expense", color = Color.Red)
                     }
                 }
             }
@@ -81,7 +84,7 @@ fun HomeScreen(vm: HomeScreenViewModel) {
 
 
         LazyColumn {
-            items(vm.recent) { tx ->
+            items(recent) { tx ->
                 TransactionRow(tx)
             }
         }
