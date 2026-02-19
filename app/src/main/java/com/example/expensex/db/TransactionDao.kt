@@ -40,7 +40,7 @@ interface TransactionDao {
         WHERE userId = :uid AND type = 'EXPENSE'
         GROUP BY categoryId
     """)
-    suspend fun getCategoryStats(uid : String) : List<CategorySum>
+     fun getCategoryStats(uid : String) : Flow<List<CategorySum>>
 
 }
 

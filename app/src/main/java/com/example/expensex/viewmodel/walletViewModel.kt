@@ -1,10 +1,10 @@
 package com.example.expensex.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.first
 import androidx.lifecycle.viewModelScope
 import com.example.expensex.SessionManager
 import com.example.expensex.db.AccountDao
@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 
 
 @HiltViewModel
@@ -31,7 +32,6 @@ class WalletViewModel @Inject constructor(
     private val accountDao: AccountDao,
     private val session: SessionManager
 ) : ViewModel() {
-    // private val _type = MutableStateFlow("EXPENSE")
 
     val uid: String =
         session.getUid()
@@ -68,6 +68,7 @@ class WalletViewModel @Inject constructor(
         viewModelScope.launch {
             val account = repo.getMainAccount(uid)
                 ?: return@launch
+
             repo.addIncome(uid, title, amount, account.id, categoryId)
             load("INCOME")
         }
@@ -75,9 +76,41 @@ class WalletViewModel @Inject constructor(
 
     fun addExpense(title: String, amount: Double, categoryId: Int) {
         viewModelScope.launch {
-            val account = repo.getMainAccount(uid) ?: return@launch
+            val uid = session.getUid() ?: return@launch
+            Log.d("VM", "Add expense clicked")
+            val account = repo.getMainAccount(uid)
+            Log.d("VM", "Account from DB = $account")
+
+            if (account == null) {
+                Log.d("VM", "❌ Account is NULL — exiting")
+                return@launch
+            }
+
             repo.addExpense(uid, title, amount, account.id, categoryId)
             load("EXPENSE")
+        }
+    }
+
+    fun ensureDefaultCategories() {
+        viewModelScope.launch {
+
+            val income = categoryDao.getCategories(uid, "INCOME").first()
+            val expense = categoryDao.getCategories(uid, "EXPENSE").first()
+
+            if (income.isEmpty() && expense.isEmpty()) {
+                val defaults = listOf(
+                    CategoryEntity(userId = uid, name = "Salary", type = "INCOME"),
+                    CategoryEntity(userId = uid, name = "Business", type = "INCOME"),
+                    CategoryEntity(userId = uid, name = "Freelance", type = "INCOME"),
+
+                    CategoryEntity(userId = uid, name = "Food", type = "EXPENSE"),
+                    CategoryEntity(userId = uid, name = "Travel", type = "EXPENSE"),
+                    CategoryEntity(userId = uid, name = "Shopping", type = "EXPENSE"),
+                    CategoryEntity(userId = uid, name = "Bills", type = "EXPENSE")
+                )
+
+                defaults.forEach { categoryDao.insert(it) }
+            }
         }
     }
 }

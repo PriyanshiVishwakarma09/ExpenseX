@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
     CategoryEntity::class,
     TransactionEntity::class
     ],
-    version = 1
+    version = 2
 )
 abstract class ExpenseDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao

@@ -32,7 +32,6 @@ import java.util.Locale
 
 @Composable
 fun HomeScreen(vm: HomeScreenViewModel) {
-
     val balance by vm.balance.collectAsState()
     val income by vm.income.collectAsState()
     val expense by vm.expense.collectAsState()
@@ -81,8 +80,6 @@ fun HomeScreen(vm: HomeScreenViewModel) {
             modifier = Modifier.padding(start = 16.dp, top = 12.dp),
             fontWeight = FontWeight.Bold
         )
-
-
         LazyColumn {
             items(recent) { tx ->
                 TransactionRow(tx)

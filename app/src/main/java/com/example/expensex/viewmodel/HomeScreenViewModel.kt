@@ -33,6 +33,7 @@ class HomeScreenViewModel @Inject constructor(
 
     val recent = transactionDao.getRecent(uid)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+  //  Get recent transactions as a Flow from Room, convert it into a lifecycle-aware StateFlow inside the ViewModel, start observing only when UI is active, and use emptyList() as the initial value
 
     val balance = combine(income, expense) { inc, exp ->
         inc - exp

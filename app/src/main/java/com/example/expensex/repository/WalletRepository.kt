@@ -1,11 +1,13 @@
 package com.example.expensex.repository
 
+import android.util.Log
 import com.example.expensex.db.AccountDao
+import com.example.expensex.db.AccountEntity
 import com.example.expensex.db.CategoryDao
 import com.example.expensex.db.CategoryEntity
 import com.example.expensex.db.TransactionDao
 import com.example.expensex.db.TransactionEntity
-import jakarta.inject.Inject
+import javax.inject.Inject
 
 class WalletRepository @Inject constructor(
     private val accountDao: AccountDao,
@@ -15,6 +17,27 @@ class WalletRepository @Inject constructor(
 
     suspend fun getMainAccount(uid: String) =
         accountDao.getMainAccounts(uid)
+
+    suspend fun ensureMainAccount(uid: String) {
+        val existing = accountDao.getMainAccounts(uid)
+        if (existing != null) {
+            Log.d("DB", "Main account already exists")
+            return
+        }
+        try {
+            accountDao.insert(
+                AccountEntity(
+                    userId = uid,
+                    name = "Main Account",
+                    balance = 0.0,
+                    isMain = true
+                )
+            )
+            Log.d("DB", "✅ Main account created")
+        } catch (e: Exception) {
+            Log.d("DB", "⚠️ Duplicate prevented")
+        }
+    }
 
     suspend fun addIncome(
         uid: String,
@@ -43,6 +66,8 @@ class WalletRepository @Inject constructor(
         accountId: Int,
         categoryId: Int
     ) {
+
+        Log.d("DB", "INSERT CALLED: $title $amount $categoryId")
         val tx = TransactionEntity(
             userId = uid,
             title = title,

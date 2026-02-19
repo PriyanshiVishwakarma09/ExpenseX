@@ -43,10 +43,9 @@ fun AddTransactionScreen(vm: WalletViewModel){
     var selectedCategory by remember { mutableStateOf<CategoryEntity?>(null) }
 
     LaunchedEffect(Unit) {
-        vm.ensureDefaultCategories {
-            vm.load(type)
-        }
+        vm.ensureDefaultCategories ()
     }
+    val categories by vm.categories.collectAsState()
 
     LaunchedEffect(type) {
         vm.load(type)
@@ -58,7 +57,6 @@ fun AddTransactionScreen(vm: WalletViewModel){
             .fillMaxSize()
             .padding(20.dp)
     ) {
-
         Row {
             Button(
                 onClick = { type = "INCOME" },
@@ -126,7 +124,6 @@ fun AddTransactionScreen(vm: WalletViewModel){
                 modifier = Modifier.fillMaxWidth()
             ) {
 
-                val categories by vm.categories.collectAsState()
 
                 if (categories.isEmpty()) {
                     DropdownMenuItem(

@@ -20,7 +20,9 @@ object DatabaseModule {
             context,
             ExpenseDatabase::class.java,
             "expense_db"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
 
     @Provides fun provideUserDao(db: ExpenseDatabase) = db.userDao()
