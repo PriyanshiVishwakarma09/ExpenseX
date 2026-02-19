@@ -13,8 +13,10 @@ import com.example.expensex.db.CategoryEntity
 import com.example.expensex.db.TransactionDao
 import com.example.expensex.repository.WalletRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -32,6 +34,10 @@ class WalletViewModel @Inject constructor(
     private val accountDao: AccountDao,
     private val session: SessionManager
 ) : ViewModel() {
+
+    private val _uiEvent = MutableSharedFlow<String>()
+    val uiEvent = _uiEvent.asSharedFlow()
+
 
     val uid: String =
         session.getUid()
@@ -70,6 +76,7 @@ class WalletViewModel @Inject constructor(
                 ?: return@launch
 
             repo.addIncome(uid, title, amount, account.id, categoryId)
+            _uiEvent.emit("Transaction added successfully")
             load("INCOME")
         }
     }
@@ -87,6 +94,7 @@ class WalletViewModel @Inject constructor(
             }
 
             repo.addExpense(uid, title, amount, account.id, categoryId)
+            _uiEvent.emit("Transaction added successfully")
             load("EXPENSE")
         }
     }
