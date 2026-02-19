@@ -36,51 +36,103 @@ fun HomeScreen(vm: HomeScreenViewModel) {
     val income by vm.income.collectAsState()
     val expense by vm.expense.collectAsState()
     val recent by vm.recent.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F7FA))
     ) {
+
+
+        Spacer(modifier = Modifier.height(12.dp))
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF2F8F83)),
-            shape = RoundedCornerShape(20.dp)
+                .padding(horizontal = 16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF2F8F83)
+            ),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-                Text("Total Balance", color = Color.White)
+            Column(
+                modifier = Modifier.padding(
+                    horizontal = 20.dp,
+                    vertical = 22.dp
+                )
+            ) {
+
                 Text(
-                    "₹ $balance",
-                    fontSize = 28.sp,
+                    "Total Balance",
+                    color = Color.White.copy(alpha = 0.9f),
+                    fontSize = 14.sp
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    "₹ ${"%,.2f".format(balance)}",
+                    fontSize = 30.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
 
-                Spacer(Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
+
                     Column {
-                        Text("Income", color = Color.White)
-                        Text("₹ $income", color = Color.Green)
+                        Text(
+                            "Income",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 13.sp
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            "₹ ${"%,.2f".format(income)}",
+                            color = Color(0xFFB9F6CA),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp
+                        )
                     }
-                    Column {
-                        Text("Expenses", color = Color.White)
-                        Text("₹ $expense", color = Color.Red)
+
+                    Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
+                        Text(
+                            "Expenses",
+                            color = Color.White.copy(alpha = 0.85f),
+                            fontSize = 13.sp
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                        Text(
+                            "₹ ${"%,.2f".format(expense)}",
+                            color = Color(0xFFFFCDD2),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 16.sp
+                        )
                     }
                 }
             }
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
         Text(
             "Transactions History",
-            modifier = Modifier.padding(start = 16.dp, top = 12.dp),
-            fontWeight = FontWeight.Bold
+            modifier = Modifier.padding(horizontal = 16.dp),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 16.sp
         )
-        LazyColumn {
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        LazyColumn(
+            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                bottom = 24.dp
+            )
+        ) {
             items(recent) { tx ->
                 TransactionRow(tx)
             }
@@ -91,25 +143,51 @@ fun HomeScreen(vm: HomeScreenViewModel) {
 
 @Composable
 fun TransactionRow(tx: TransactionEntity) {
-    Row(
+
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        shape = RoundedCornerShape(14.dp),
+        elevation = CardDefaults.cardElevation(2.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
     ) {
-        Column {
-            Text(tx.title, fontWeight = FontWeight.Bold)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            Column {
+                Text(
+                    tx.title,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 15.sp
+                )
+
+                Spacer(modifier = Modifier.height(2.dp))
+
+                Text(
+                    SimpleDateFormat("dd MMM", Locale.getDefault())
+                        .format(Date(tx.date)),
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+            }
+
             Text(
-                SimpleDateFormat("dd MMM", Locale.getDefault())
-                    .format(Date(tx.date)),
-                fontSize = 12.sp
+                (if (tx.type == "INCOME") "+" else "-") +
+                        "₹${"%,.2f".format(tx.amount)}",
+                color = if (tx.type == "INCOME")
+                    Color(0xFF2E7D32)
+                else
+                    Color(0xFFC62828),
+                fontWeight = FontWeight.Bold,
+                fontSize = 15.sp
             )
         }
-
-        Text(
-            (if (tx.type == "INCOME") "+" else "-") + "₹${tx.amount}",
-            color = if (tx.type == "INCOME") Color.Green else Color.Red,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
