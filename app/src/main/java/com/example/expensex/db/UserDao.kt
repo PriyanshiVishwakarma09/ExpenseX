@@ -7,7 +7,6 @@ import androidx.room.Query
 
 @Dao
 interface UserDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE) //Insert this data. If a row with the same primary key already exists, replace it with the new one.
     suspend fun insertUser(user : userEntity)
 

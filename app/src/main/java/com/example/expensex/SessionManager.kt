@@ -14,6 +14,7 @@ class SessionManager(context: Context) {
         return prefs.getString("uid", null)
     }
 
+
     fun clear() {
         prefs.edit().clear().apply()
     }

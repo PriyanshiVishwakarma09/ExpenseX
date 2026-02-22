@@ -7,14 +7,17 @@ import com.example.expensex.db.CategoryDao
 import com.example.expensex.db.CategoryEntity
 import com.example.expensex.db.TransactionDao
 import com.example.expensex.db.TransactionEntity
+import com.example.expensex.db.UserDao
+import com.example.expensex.model.User
 import javax.inject.Inject
 
 class WalletRepository @Inject constructor(
+
+    private val userDao: UserDao,
     private val accountDao: AccountDao,
     private val categoryDao: CategoryDao,
     private val transactionDao: TransactionDao
 ) {
-
     suspend fun getMainAccount(uid: String) =
         accountDao.getMainAccounts(uid)
 
@@ -59,6 +62,8 @@ class WalletRepository @Inject constructor(
         accountDao.addBalance(accountId, amount)
     }
 
+
+
     suspend fun addExpense(
         uid: String,
         title: String,
@@ -80,6 +85,8 @@ class WalletRepository @Inject constructor(
         transactionDao.insert(tx)
         accountDao.subtractBalance(accountId, amount)
     }
+
+
 
     fun getCategories(uid: String, type: String) =
         categoryDao.getCategories(uid, type)

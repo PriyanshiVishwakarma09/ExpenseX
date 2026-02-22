@@ -8,7 +8,9 @@ import com.example.expensex.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensex.SessionManager
+import com.example.expensex.db.UserDao
 import com.example.expensex.repository.WalletRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
@@ -18,7 +20,7 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
     private val repo : AuthRepository,
     private val repository: WalletRepository ,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
 ) : ViewModel(){
 
     var loading by mutableStateOf(false)
@@ -51,6 +53,8 @@ class AuthViewModel @Inject constructor(
             repository.ensureMainAccount(uid)
         }
     }
+
+
 
 
 

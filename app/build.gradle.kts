@@ -87,4 +87,5 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
+    implementation("androidx.compose.material:material-icons-extended")
 }
