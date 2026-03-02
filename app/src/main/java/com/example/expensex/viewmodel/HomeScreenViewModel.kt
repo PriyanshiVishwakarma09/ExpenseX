@@ -30,11 +30,15 @@ class HomeScreenViewModel @Inject constructor(
     private val _username = MutableStateFlow<String>("User")
     val username  = _username.asStateFlow()
 
+    private val _useremail = MutableStateFlow<String>("Useremail")
+    val useremail  = _useremail.asStateFlow()
+
     init{
         viewModelScope.launch{
             val fetchuser = userDao.getUser(uid)
             if(fetchuser != null){
                 _username.value = fetchuser.name
+                _useremail.value = fetchuser.email
             }
         }
     }

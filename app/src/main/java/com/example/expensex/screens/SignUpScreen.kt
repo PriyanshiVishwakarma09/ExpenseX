@@ -3,8 +3,10 @@ package com.example.expensex.screens
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -46,16 +48,15 @@ fun RegisterScreen(
                     .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
                     .background(TealColor)
             )
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 24.dp),
+                    .padding(horizontal = 24.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(60.dp))
 
-                // Header Text
                 Text(
                     text = "Create Account",
                     color = Color.White,
@@ -71,7 +72,6 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // 2. Main Form Card
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(32.dp),
@@ -154,7 +154,7 @@ fun RegisterScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Toggle to Login
+
                 TextButton(onClick = onNavigateToLogin) {
                     Text("Already have an account? Login", color = TealColor, fontWeight = FontWeight.SemiBold)
                 }

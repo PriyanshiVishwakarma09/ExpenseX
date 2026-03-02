@@ -66,8 +66,8 @@ class AuthRepository @Inject constructor(
             .addOnFailureListener { onResult(false , it.message ?: "Login failed")
             }
     }
-
     fun getCurrentUser(): FirebaseUser? = auth.currentUser //This function returns the currently logged-in Firebase user, or null if no user is logged in.
+    
 
 
 }

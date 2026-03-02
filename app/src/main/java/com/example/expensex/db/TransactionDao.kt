@@ -3,6 +3,7 @@ package com.example.expensex.db
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import com.example.expensex.model.TimePeriodSum
 import kotlinx.coroutines.flow.Flow
 
 
@@ -42,8 +43,43 @@ interface TransactionDao {
     """)
      fun getCategoryStats(uid : String) : Flow<List<CategorySum>>
 
-}
+     @Query("""
+         SELECT strftime('%Y-%m-%d' , date /1000 , 'unixepoch' , 'localtime') as timeLabel ,
+         SUM(amount) as total
+         FROM transactions
+         WHERE userId = :uid 
+         AND type = 'EXPENSE'
+         AND date >= :startDate
+         AND date <= :endDate
+         GROUP BY timeLabel
+         ORDER BY timeLabel ASC
+     """)
+     fun getExpensesPerDay(uid : String , startDate : Long , endDate : Long) : Flow<List<TimePeriodSum>>
 
+    @Query("""
+         SELECT strftime('%Y-%m-%d' , date /1000 , 'unixepoch' , 'localtime') as timeLabel ,
+         SUM(amount) as total
+         FROM transactions
+         WHERE userId = :uid 
+         AND type = 'EXPENSE'
+         AND date >= :startDate
+         AND date <= :endDate
+         GROUP BY timeLabel
+         ORDER BY timeLabel ASC
+     """)
+    fun getExpensesPerMonth(uid : String , startDate : Long , endDate : Long) : Flow<List<TimePeriodSum>>
+
+    @Query("""
+         SELECT strftime('%Y-%m-%d' , date /1000 , 'unixepoch' , 'localtime') as timeLabel ,
+         SUM(amount) as total
+         FROM transactions
+         WHERE userId = :uid 
+         AND type = 'EXPENSE'
+         GROUP BY timeLabel
+         ORDER BY timeLabel ASC
+     """)
+    fun getExpensesPerYear(uid : String) : Flow<List<TimePeriodSum>>
+}
 
 data class CategorySum(
     val categoryId : Int ,

@@ -52,7 +52,9 @@ fun MainScaffold(
                 AddTransactionScreen(vm)
             }
             composable(Routes.STATS) { StatsScreen() }
-            composable(Routes.PROFILE) { ProfileScreen() }
+            composable(Routes.PROFILE) {
+                val vm: WalletViewModel = hiltViewModel()
+                ProfileScreen(homeVm , vm) }
             composable(Routes.ADD) {
                 AddTransactionScreen(hiltViewModel())
             }

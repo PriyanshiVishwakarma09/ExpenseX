@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.expensex.SessionManager
 import com.example.expensex.db.AccountDao
 import com.example.expensex.db.CategoryDao
@@ -92,7 +93,6 @@ class WalletViewModel @Inject constructor(
                 Log.d("VM", "❌ Account is NULL — exiting")
                 return@launch
             }
-
             repo.addExpense(uid, title, amount, account.id, categoryId)
             _uiEvent.emit("Transaction added successfully")
             load("EXPENSE")
@@ -101,7 +101,6 @@ class WalletViewModel @Inject constructor(
 
     fun ensureDefaultCategories() {
         viewModelScope.launch {
-
             val income = categoryDao.getCategories(uid, "INCOME").first()
             val expense = categoryDao.getCategories(uid, "EXPENSE").first()
 
@@ -119,6 +118,20 @@ class WalletViewModel @Inject constructor(
 
                 defaults.forEach { categoryDao.insert(it) }
             }
+        }
+    }
+
+
+    fun addCategories(title: String, type: String){
+        viewModelScope.launch {
+           val cat =  CategoryEntity(userId = uid , name = title , type = type)
+            repo.addCategory(cat)
+        }
+    }
+    fun deleteCategory(title: String, type: String){
+        viewModelScope.launch {
+            val cat = CategoryEntity(userId = uid , name = title , type = type)
+                repo.deleteCategory(cat)
         }
     }
 }
