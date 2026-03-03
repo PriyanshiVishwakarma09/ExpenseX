@@ -20,9 +20,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.expensex.model.Routes
 import com.example.expensex.screens.AddTransactionScreen
+import com.example.expensex.screens.ExpenseTrackerScreen
 import com.example.expensex.screens.HomeScreen
 import com.example.expensex.screens.ProfileScreen
-import com.example.expensex.screens.StatsScreen
+import com.example.expensex.ui.viewmodel.ExpenseChartViewModel
 import com.example.expensex.viewmodel.HomeScreenViewModel
 import com.example.expensex.viewmodel.WalletViewModel
 
@@ -51,7 +52,10 @@ fun MainScaffold(
                 val vm: WalletViewModel = hiltViewModel()
                 AddTransactionScreen(vm)
             }
-            composable(Routes.STATS) { StatsScreen() }
+            composable(Routes.STATS) {
+                val vm : ExpenseChartViewModel = hiltViewModel()
+                ExpenseTrackerScreen(vm)
+            }
             composable(Routes.PROFILE) {
                 val vm: WalletViewModel = hiltViewModel()
                 ProfileScreen(homeVm , vm) }

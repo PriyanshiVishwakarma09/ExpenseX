@@ -31,6 +31,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -46,6 +47,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -83,9 +85,14 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-// Hilt + Compose
+    // Hilt + Compose
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation ("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("androidx.compose.material:material-icons-extended")
+
+    val vicoVersion = "1.15.0"
+    implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
+    implementation("com.patrykandpatrick.vico:compose-m3:$vicoVersion") // For Material 3 styling
+    implementation("com.patrykandpatrick.vico:core:$vicoVersion")
 }
