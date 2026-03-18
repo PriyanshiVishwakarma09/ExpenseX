@@ -2,10 +2,13 @@ package com.example.expensex.ui.viewmodel // Adjust to your package name
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.expensex.SessionManager
 import com.example.expensex.db.TransactionDao
 import com.example.expensex.model.TimePeriodSum
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.entryOf
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import java.time.DayOfWeek
@@ -13,7 +16,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 // Enum to define the tabs on your screen
-enum class TimePeriod { Day, Week, Month, Year }
+enum class TimePeriod { Week, Month, Year }
 
 // Data class to hold the formatted data ready for the UI & Vico Chart
 data class ChartData(
@@ -21,14 +24,16 @@ data class ChartData(
     val labels: List<String>
 )
 
-class ExpenseChartViewModel(
+@HiltViewModel
+class ExpenseChartViewModel @Inject constructor(
     private val dao: TransactionDao,
-    private val userId: String = "USER_ID_HERE" // Replace with how you get the logged-in user's ID
+    sessionManager: SessionManager
 ) : ViewModel() {
-
-
     private val _selectedPeriod = MutableStateFlow(TimePeriod.Week)
     val selectedPeriod: StateFlow<TimePeriod> = _selectedPeriod.asStateFlow()
+
+    private val userId = sessionManager.getUid()
+        ?: throw IllegalStateException("User not logged in")
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val chartData: StateFlow<ChartData> = _selectedPeriod.flatMapLatest { period ->
@@ -69,12 +74,6 @@ class ExpenseChartViewModel(
                 dao.getExpensesPerMonth(userId, startOfYear, endOfYear)
                     .map { formatForVico(it) }
             }
-
-            TimePeriod.Day -> {
-                // For a single day, you'd typically need a DAO query grouping by hour.
-                // Leaving empty for now so it doesn't crash if clicked.
-                flowOf(ChartData(emptyList(), emptyList()))
-            }
         }
     }.stateIn(
         scope = viewModelScope,
@@ -108,18 +107,16 @@ class ExpenseChartViewModel(
         var week2Total = 0.0 // Days 8-14
         var week3Total = 0.0 // Days 15-21
         var week4Total = 0.0 // Days 22+
-
         dailyData.forEach { item ->
             // Extract the day number from "YYYY-MM-DD"
             val dayOfMonth = item.timeLabel.substringAfterLast("-").toIntOrNull() ?: 1
-            when (dayOfMonth) {
+            when(dayOfMonth){
                 in 1..7 -> week1Total += item.total
                 in 8..14 -> week2Total += item.total
                 in 15..21 -> week3Total += item.total
                 else -> week4Total += item.total
             }
         }
-
         val entries = listOf(
             entryOf(0f, week1Total.toFloat()),
             entryOf(1f, week2Total.toFloat()),

@@ -29,15 +29,25 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.expensex.R
 import com.example.expensex.model.Routes
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController){
     LaunchedEffect(true){
         delay(2000)
-        navController.navigate(Routes.LOGIN){
-            popUpTo(Routes.SPLASH){
-                inclusive = true
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if(currentUser != null){
+            navController.navigate("${Routes.HOME}/${currentUser.uid}") {
+                popUpTo(Routes.SPLASH) { inclusive = true }
+            }
+        }
+        else {
+            navController.navigate(Routes.LOGIN) {
+                popUpTo(Routes.SPLASH) {
+                    inclusive = true
+                }
             }
         }
     }

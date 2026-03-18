@@ -3,7 +3,9 @@ package com.example.expensex.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -31,29 +33,25 @@ import java.util.Locale
 
 @Composable
 fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
-    // 1. Collect State from your ViewModel
+
     val selectedPeriod by viewModel.selectedPeriod.collectAsState()
     val chartData by viewModel.chartData.collectAsState()
 
-    // 2. Vico's Producer (this handles the smooth morphing animation)
     val modelProducer = remember { ChartEntryModelProducer() }
 
-    // 3. Feed the database data into the chart whenever it changes
     LaunchedEffect(chartData) {
         if (chartData.entries.isNotEmpty()) {
             modelProducer.setEntries(chartData.entries)
         }
     }
-
-    // Your brand colors
     val primaryTeal = Color(0xFF4F9A94)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(16.dp)
     ) {
-        // --- TIME TOGGLE ROW ---
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,9 +75,6 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                 }
             }
         }
-
-        // --- THE LIVE CHART ---
-        // Style the line and the gradient fill underneath
         val lineSpec = LineChart.LineSpec(
             lineColor = primaryTeal.toArgb(),
             lineThicknessDp = 3f,
@@ -90,7 +85,7 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
             )
         )
 
-        // Format the raw DAO dates ("2023-10-25" -> "Wed")
+
         val bottomAxisFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
             val rawLabel = chartData.labels.getOrNull(value.toInt()) ?: return@AxisValueFormatter ""
 
@@ -105,29 +100,28 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                         Month.of(rawLabel.toInt()).getDisplayName(TextStyle.SHORT, Locale.getDefault())
                     } catch (e: Exception) { rawLabel }
                 }
-                else -> rawLabel // Month and Day views already have clean labels
+                else -> rawLabel
             }
         }
 
-        // Render the actual chart component
         if (chartData.entries.isNotEmpty()) {
             Chart(
                 chart = lineChart(
                     lines = listOf(lineSpec),
-                    spacing = 44.dp // Curve smoothness
+                    spacing = 44.dp
                 ),
                 chartModelProducer = modelProducer,
                 bottomAxis = rememberBottomAxis(
                     valueFormatter = bottomAxisFormatter,
-                    guideline = null, // Removes vertical grid lines
-                    tickLength = 0.dp // Hides the little tick marks on the axis
+                    guideline = null,
+                    tickLength = 0.dp
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
             )
         } else {
-            // Optional: Show a "No data yet" message if the database is empty
+
             Text("No expenses recorded yet.", color = Color.Gray)
         }
     }

@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,16 +31,20 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.expensex.db.CategoryEntity
 import com.example.expensex.db.UserDao
+import com.example.expensex.model.Routes
 import com.example.expensex.viewmodel.HomeScreenViewModel
 import com.example.expensex.viewmodel.WalletViewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
    vm : HomeScreenViewModel,
-   vmm : WalletViewModel
+   vmm : WalletViewModel,
+   navController: NavController
     //onLogoutClick: () -> Unit
 ) {
     val TealColor = Color(0xFF3B978F)
@@ -65,7 +71,9 @@ fun ProfileScreen(
         )
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -152,9 +160,16 @@ fun ProfileScreen(
             ProfileOptionRow(
                 icon = Icons.Default.ExitToApp,
                 title = "Logout",
-
+                onClick = {
+                    FirebaseAuth.getInstance().signOut()
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
             )
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -232,11 +247,12 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileOptionRow(icon: ImageVector, title: String, ) {
+fun ProfileOptionRow(icon: ImageVector, title: String,
+                     onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { onClick()}
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -22,7 +22,8 @@ fun Navigation() {
 
     NavHost(navController, startDestination = Routes.SPLASH) {
 
-        composable(Routes.SPLASH) { SplashScreen(navController) }
+        composable(Routes.SPLASH) { SplashScreen(
+            navController) }
 
         composable(Routes.LOGIN) {
             val vm: AuthViewModel = hiltViewModel()
@@ -50,7 +51,7 @@ fun Navigation() {
             val homeVm: HomeScreenViewModel =
                 hiltViewModel(backStack)
 
-            MainScaffold(uid, homeVm)
+            MainScaffold(uid, homeVm, navController)
         }
     }
 }

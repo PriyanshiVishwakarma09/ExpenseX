@@ -30,17 +30,14 @@ fun RegisterScreen(
     vm: AuthViewModel,
     onNavigateToLogin: () -> Unit
 ) {
-
     val TealColor = Color(0xFF3B978F)
     val BgLightColor = Color(0xFFF8F9FA)
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
-
     Scaffold(containerColor = BgLightColor) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -56,7 +53,6 @@ fun RegisterScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(60.dp))
-
                 Text(
                     text = "Create Account",
                     color = Color.White,
@@ -69,20 +65,17 @@ fun RegisterScreen(
                     color = Color.White.copy(alpha = 0.8f),
                     fontSize = 16.sp
                 )
-
                 Spacer(modifier = Modifier.height(40.dp))
-
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(32.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(8.dp)
-                ) {
+                ){
                     Column(
                         modifier = Modifier.padding(24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
+                    ){
                         OutlinedTextField(
                             value = name,
                             onValueChange = { name = it },
@@ -96,9 +89,7 @@ fun RegisterScreen(
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
-
                         Spacer(modifier = Modifier.height(16.dp))
-
                         OutlinedTextField(
                             value = email,
                             onValueChange = { email = it },
@@ -113,10 +104,8 @@ fun RegisterScreen(
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
-
                         Spacer(modifier = Modifier.height(16.dp))
-
-                        OutlinedTextField(
+                        OutlinedTextField (
                             value = password,
                             onValueChange = { password = it },
                             label = { Text("Password", color = Color.Gray) },
@@ -131,9 +120,7 @@ fun RegisterScreen(
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
-
                         Spacer(modifier = Modifier.height(32.dp))
-
                         Button(
                             onClick = {
                                 vm.register(name, email, password) { ok, msg ->
@@ -146,16 +133,13 @@ fun RegisterScreen(
                                 .height(56.dp),
                             shape = RoundedCornerShape(30.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = TealColor)
-                        ) {
+                        ){
                             Text("Sign Up", fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color.White)
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(24.dp))
-
-
-                TextButton(onClick = onNavigateToLogin) {
+                TextButton(onClick = onNavigateToLogin){
                     Text("Already have an account? Login", color = TealColor, fontWeight = FontWeight.SemiBold)
                 }
             }

@@ -3,7 +3,6 @@ package com.example.expensex.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,18 +12,21 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.expensex.db.TransactionEntity
-import com.example.expensex.db.userEntity
 import com.example.expensex.viewmodel.HomeScreenViewModel
-import kotlinx.coroutines.flow.StateFlow
 import java.text.SimpleDateFormat
+import androidx.compose.ui.text.TextStyle
 import java.util.Date
 import java.util.Locale
 
@@ -41,7 +43,6 @@ fun HomeScreen(vm: HomeScreenViewModel) {
     val expense by vm.expense.collectAsState()
     val recent by vm.recent.collectAsState()
     val username by vm.username.collectAsState()
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -58,6 +59,7 @@ fun HomeScreen(vm: HomeScreenViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                //.verticalScroll(rememberScrollState())
                 .padding(top = 40.dp)
         ) {
             TopHeaderRow(username)
@@ -133,6 +135,7 @@ fun BalanceCard(balance: Double, income: Double, expense: Double) {
         Column(
             modifier = Modifier.padding(24.dp)
         ) {
+            // Top Row (Total Balance Label)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -153,21 +156,28 @@ fun BalanceCard(balance: Double, income: Double, expense: Double) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                "$ ${"%,.2f".format(balance)}",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
+            // Main Balance Amount (Now Auto-Resizes)
+            Column(modifier = Modifier.fillMaxWidth()){
+                AutoResizedText(
+                    text = "$ ${"%,.2f".format(balance)}",
+                    style = TextStyle(fontSize = 32.sp, fontWeight = FontWeight.Bold),
+                    color = Color.White,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
             Spacer(modifier = Modifier.height(28.dp))
 
+            // Bottom Row (Income & Expenses)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // Income
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                // Income Section
+                Row(
+                    modifier = Modifier.weight(1f), // Locks to 50% width
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
@@ -178,14 +188,23 @@ fun BalanceCard(balance: Double, income: Double, expense: Double) {
                         Icon(Icons.Default.ArrowDownward, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) { // Prevents text from pushing past its bounds
                         Text("Income", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                        Text("$ ${"%,.2f".format(income)}", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                        AutoResizedText(
+                            text = "$ ${"%,.2f".format(income)}",
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                            color = Color.White
+                        )
                     }
                 }
 
-                // Expenses
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(modifier = Modifier.width(16.dp)) // Buffer space in the middle
+
+                // Expenses Section
+                Row(
+                    modifier = Modifier.weight(1f), // Locks to 50% width
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
@@ -196,9 +215,13 @@ fun BalanceCard(balance: Double, income: Double, expense: Double) {
                         Icon(Icons.Default.ArrowUpward, contentDescription = null, tint = Color.White, modifier = Modifier.size(16.dp))
                     }
                     Spacer(modifier = Modifier.width(8.dp))
-                    Column {
+                    Column(modifier = Modifier.weight(1f)) { // Prevents text from pushing past its bounds
                         Text("Expenses", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
-                        Text("$ ${"%,.2f".format(expense)}", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                        AutoResizedText(
+                            text = "$ ${"%,.2f".format(expense)}",
+                            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold),
+                            color = Color.White
+                        )
                     }
                 }
             }
@@ -280,3 +303,35 @@ fun TransactionRow(tx: TransactionEntity) {
     }
 }
 
+
+@Composable
+fun AutoResizedText(
+    text: String,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified
+) {
+    var resizedTextStyle by remember { mutableStateOf(style) }
+    var shouldDraw by remember { mutableStateOf(false) }
+
+    Text(
+        text = text,
+        color = if (color != Color.Unspecified) color else style.color, // And this line
+        modifier = modifier.drawWithContent {
+            if (shouldDraw) {
+                drawContent()
+            }
+        },
+        softWrap = false,
+        style = resizedTextStyle,
+        onTextLayout = { result ->
+            if (result.didOverflowWidth) {
+                resizedTextStyle = resizedTextStyle.copy(
+                    fontSize = resizedTextStyle.fontSize * 0.95f
+                )
+            } else {
+                shouldDraw = true
+            }
+        }
+    )
+}

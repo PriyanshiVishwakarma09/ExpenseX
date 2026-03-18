@@ -12,7 +12,6 @@ import com.example.expensex.model.User
 import javax.inject.Inject
 
 class WalletRepository @Inject constructor(
-
     private val userDao: UserDao,
     private val accountDao: AccountDao,
     private val categoryDao: CategoryDao,

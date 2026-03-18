@@ -2,27 +2,22 @@ package com.example.expensex.navigation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
+
 import com.example.expensex.model.Routes
-import com.example.expensex.screens.AddTransactionScreen
-import com.example.expensex.screens.ExpenseTrackerScreen
-import com.example.expensex.screens.HomeScreen
-import com.example.expensex.screens.ProfileScreen
+import com.example.expensex.screens.*
 import com.example.expensex.ui.viewmodel.ExpenseChartViewModel
 import com.example.expensex.viewmodel.HomeScreenViewModel
 import com.example.expensex.viewmodel.WalletViewModel
@@ -32,51 +27,77 @@ val TealColor = Color(0xFF3B978F)
 @Composable
 fun MainScaffold(
     uid: String,
-    homeVm: HomeScreenViewModel
+    homeVm: HomeScreenViewModel,
+    navController: NavController
 ) {
-    val navController = rememberNavController()
+    val innerNavController = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
-        bottomBar = { BottomBar(navController) }
+        bottomBar = { BottomBar(innerNavController) },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) { data ->
+                Snackbar(
+                    snackbarData = data,
+                    containerColor = TealColor,
+                    contentColor = Color.White,
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+        }
     ) { padding ->
 
         NavHost(
-            navController = navController,
+            navController = innerNavController,
             startDestination = Routes.HOME,
             modifier = Modifier.padding(padding)
         ) {
+
             composable(Routes.HOME) {
                 HomeScreen(homeVm)
             }
+
             composable(Routes.WALLET) {
                 val vm: WalletViewModel = hiltViewModel()
-                AddTransactionScreen(vm)
+                AddTransactionScreen(
+                    vm = vm,
+                    snackbarHostState = snackbarHostState
+                )
             }
+
             composable(Routes.STATS) {
-                val vm : ExpenseChartViewModel = hiltViewModel()
-                ExpenseTrackerScreen(vm)
+                val viewModel: ExpenseChartViewModel = hiltViewModel()
+                ExpenseTrackerScreen(viewModel)
             }
+
             composable(Routes.PROFILE) {
-                val vm: WalletViewModel = hiltViewModel()
-                ProfileScreen(homeVm , vm) }
+                    val vm: WalletViewModel = hiltViewModel()
+                    ProfileScreen(homeVm , vm , navController = navController)
+
+            }
+
             composable(Routes.ADD) {
-                AddTransactionScreen(hiltViewModel())
+                AddTransactionScreen(
+                    vm = hiltViewModel(),
+                    snackbarHostState = snackbarHostState
+                )
             }
         }
     }
 }
+
 @Composable
 fun BottomBar(navController: NavController) {
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Use a Box to layer the FAB right on top of the BottomAppBar
     Box(
         modifier = Modifier.fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter
     ) {
 
-        // 1. The White Bottom Navigation Background
         BottomAppBar(
             containerColor = Color.White,
             contentColor = Color.Gray,
@@ -89,7 +110,13 @@ fun BottomBar(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { navController.navigate(Routes.HOME) }) {
+
+                IconButton(onClick = {
+                    navController.navigate(Routes.HOME) {
+                        popUpTo(Routes.HOME)
+                        launchSingleTop = true
+                    }
+                }) {
                     Icon(
                         imageVector = if (currentRoute == Routes.HOME) Icons.Filled.Home else Icons.Outlined.Home,
                         contentDescription = "Home",
@@ -98,7 +125,12 @@ fun BottomBar(navController: NavController) {
                     )
                 }
 
-                IconButton(onClick = { navController.navigate(Routes.STATS) }) {
+                IconButton(onClick = {
+                    navController.navigate(Routes.STATS) {
+                        popUpTo(Routes.STATS)
+                        launchSingleTop = true
+                    }
+                }) {
                     Icon(
                         imageVector = Icons.Default.Assessment,
                         contentDescription = "Stats",
@@ -107,10 +139,14 @@ fun BottomBar(navController: NavController) {
                     )
                 }
 
-                // Gap in the middle for the FAB
                 Spacer(modifier = Modifier.weight(1f))
 
-                IconButton(onClick = { navController.navigate(Routes.WALLET) }) {
+                IconButton(onClick = {
+                    navController.navigate(Routes.WALLET) {
+                        popUpTo(Routes.WALLET)
+                        launchSingleTop = true
+                    }
+                }) {
                     Icon(
                         imageVector = Icons.Default.AccountBalanceWallet,
                         contentDescription = "Wallet",
@@ -119,7 +155,12 @@ fun BottomBar(navController: NavController) {
                     )
                 }
 
-                IconButton(onClick = { navController.navigate(Routes.PROFILE) }) {
+                IconButton(onClick = {
+                    navController.navigate(Routes.PROFILE) {
+                        popUpTo(Routes.PROFILE)
+                        launchSingleTop = true
+                    }
+                }) {
                     Icon(
                         imageVector = if (currentRoute == Routes.PROFILE) Icons.Filled.Person else Icons.Outlined.Person,
                         contentDescription = "Profile",
@@ -131,7 +172,9 @@ fun BottomBar(navController: NavController) {
         }
 
         FloatingActionButton(
-            onClick = { navController.navigate(Routes.ADD) },
+            onClick = {
+                navController.navigate(Routes.ADD)
+            },
             shape = CircleShape,
             containerColor = TealColor,
             contentColor = Color.White,
