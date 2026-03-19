@@ -85,11 +85,6 @@ git clone https://github.com/your-username/expense-tracker.git
 
 <hr>
 
-<h2>📸 Screenshots</h2>
-<p>Add your app screenshots here</p>
-
-<hr>
-
 <h2>🔮 Future Improvements</h2>
 <ul>
   <li>☁️ Firebase Integration</li>
