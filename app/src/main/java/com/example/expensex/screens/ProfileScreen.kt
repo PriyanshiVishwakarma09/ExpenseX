@@ -45,7 +45,6 @@ fun ProfileScreen(
    vm : HomeScreenViewModel,
    vmm : WalletViewModel,
    navController: NavController
-    //onLogoutClick: () -> Unit
 ) {
     val TealColor = Color(0xFF3B978F)
     val BgLightColor = Color(0xFFF8F9FA)
@@ -55,7 +54,6 @@ fun ProfileScreen(
     var type by remember { mutableStateOf("EXPENSE") }
     var showKeypad by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
-
 
     Box(
         modifier = Modifier
@@ -179,12 +177,10 @@ fun ProfileScreen(
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-
                     Text(
                         text = "Add Category",
                         style = MaterialTheme.typography.titleMedium
                     )
-
                     Spacer(modifier = Modifier.height(12.dp))
 
                     OutlinedTextField(
@@ -239,9 +235,6 @@ fun ProfileScreen(
                     }
                 }
             }
-
-
-
         }
     }
 }
@@ -270,9 +263,7 @@ fun ProfileOptionRow(icon: ImageVector, title: String,
                 tint = TealColor
             )
         }
-
         Spacer(modifier = Modifier.width(20.dp))
-
         Text(
             text = title,
             fontSize = 16.sp,

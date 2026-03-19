@@ -86,7 +86,6 @@ class WalletRepository @Inject constructor(
     }
 
 
-
     fun getCategories(uid: String, type: String) =
         categoryDao.getCategories(uid, type)
 

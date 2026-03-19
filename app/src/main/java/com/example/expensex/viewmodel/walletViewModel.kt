@@ -109,25 +109,27 @@ class WalletViewModel @Inject constructor(
                     CategoryEntity(userId = uid, name = "Salary", type = "INCOME"),
                     CategoryEntity(userId = uid, name = "Business", type = "INCOME"),
                     CategoryEntity(userId = uid, name = "Freelance", type = "INCOME"),
-
+                    CategoryEntity(userId = uid , name = "Others" , type = "INCOME"),
                     CategoryEntity(userId = uid, name = "Food", type = "EXPENSE"),
                     CategoryEntity(userId = uid, name = "Travel", type = "EXPENSE"),
                     CategoryEntity(userId = uid, name = "Shopping", type = "EXPENSE"),
-                    CategoryEntity(userId = uid, name = "Bills", type = "EXPENSE")
+                    CategoryEntity(userId = uid, name = "Bills", type = "EXPENSE"),
+                    CategoryEntity(userId = uid , name = "Rent" , type = "EXPENSE"),
+                    CategoryEntity(userId = uid , name = "Others" , type = "EXPENSE")
                 )
-
                 defaults.forEach { categoryDao.insert(it) }
             }
         }
     }
 
-
     fun addCategories(title: String, type: String){
         viewModelScope.launch {
            val cat =  CategoryEntity(userId = uid , name = title , type = type)
+            Log.d("DEBUG", "Category added: $title, $type")
             repo.addCategory(cat)
         }
     }
+
     fun deleteCategory(title: String, type: String){
         viewModelScope.launch {
             val cat = CategoryEntity(userId = uid , name = title , type = type)
