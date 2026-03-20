@@ -57,17 +57,21 @@ interface TransactionDao {
      fun getExpensesPerDay(uid : String , startDate : Long , endDate : Long) : Flow<List<TimePeriodSum>>
 
     @Query("""
-         SELECT strftime('%Y-%m-%d' , date /1000 , 'unixepoch' , 'localtime') as timeLabel ,
-         SUM(amount) as total
-         FROM transactions
-         WHERE userId = :uid 
-         AND type = 'EXPENSE'
-         AND date >= :startDate
-         AND date <= :endDate
-         GROUP BY timeLabel
-         ORDER BY timeLabel ASC
-     """)
-    fun getExpensesPerMonth(uid : String , startDate : Long , endDate : Long) : Flow<List<TimePeriodSum>>
+    SELECT strftime('%m', date / 1000, 'unixepoch', 'localtime') as timeLabel,
+    SUM(amount) as total
+    FROM transactions
+    WHERE userId = :uid 
+    AND type = 'EXPENSE'
+    AND date >= :startDate
+    AND date <= :endDate
+    GROUP BY timeLabel
+    ORDER BY timeLabel ASC
+    """)
+    fun getExpensesPerMonth(
+        uid: String,
+        startDate: Long,
+        endDate: Long
+    ): Flow<List<TimePeriodSum>>
 
     @Query("""
          SELECT strftime('%Y-%m-%d' , date /1000 , 'unixepoch' , 'localtime') as timeLabel ,

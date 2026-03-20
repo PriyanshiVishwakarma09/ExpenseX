@@ -39,7 +39,6 @@ class WalletViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<String>()
     val uiEvent = _uiEvent.asSharedFlow()
 
-
     val uid: String =
         session.getUid()
             ?: throw IllegalStateException("User not logged in")

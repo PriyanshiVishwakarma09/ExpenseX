@@ -15,10 +15,8 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZoneId
 
-// Enum to define the tabs on your screen
 enum class TimePeriod { Week, Month, Year }
 
-// Data class to hold the formatted data ready for the UI & Vico Chart
 data class ChartData(
     val entries: List<FloatEntry>,
     val labels: List<String>
@@ -49,7 +47,10 @@ class ExpenseChartViewModel @Inject constructor(
                     .atTime(23, 59, 59).atZone(zone).toInstant().toEpochMilli()
 
                 dao.getExpensesPerDay(userId, startOfWeek, endOfWeek)
-                    .map { formatForVico(it) }
+                    .map {
+                        val start = now.with(DayOfWeek.MONDAY)
+                        formatWeek(it, start)
+                    }
             }
 
             TimePeriod.Month -> {
@@ -72,7 +73,7 @@ class ExpenseChartViewModel @Inject constructor(
                     .atTime(23, 59, 59).atZone(zone).toInstant().toEpochMilli()
 
                 dao.getExpensesPerMonth(userId, startOfYear, endOfYear)
-                    .map { formatForVico(it) }
+                    .map { formatYear(it) }
             }
         }
     }.stateIn(
@@ -86,16 +87,40 @@ class ExpenseChartViewModel @Inject constructor(
         _selectedPeriod.value = period
     }
 
-    // --- Helper Functions ---
+    private fun formatWeek(data: List<TimePeriodSum>, start: LocalDate): ChartData {
 
-    /**
-     * Converts standard DAO results into Vico Chart Format (X index, Y value)
-     */
-    private fun formatForVico(data: List<TimePeriodSum>): ChartData {
-        val entries = data.mapIndexed { index, item ->
-            entryOf(x = index.toFloat(), y = item.total.toFloat())
+        val map = data.associateBy { it.timeLabel }
+
+        val entries = mutableListOf<FloatEntry>()
+        val labels = mutableListOf<String>()
+
+        for (i in 0..6) {
+            val date = start.plusDays(i.toLong())
+            val key = date.toString()
+
+            val total = map[key]?.total ?: 0.0
+
+            entries.add(entryOf(i.toFloat(), total.toFloat()))
+            labels.add(key)
         }
-        val labels = data.map { it.timeLabel }
+
+        return ChartData(entries, labels)
+    }
+
+    private fun formatYear(data: List<TimePeriodSum>): ChartData {
+        val map = data.associateBy { it.timeLabel } // "01", "02", ...
+
+        val entries = mutableListOf<FloatEntry>()
+        val labels = mutableListOf<String>()
+
+        for (month in 1..12) {
+            val key = month.toString().padStart(2, '0') // "01", "02"
+            val total = map[key]?.total ?: 0.0
+
+            entries.add(entryOf((month - 1).toFloat(), total.toFloat()))
+            labels.add(key)
+        }
+
         return ChartData(entries, labels)
     }
 
@@ -124,7 +149,6 @@ class ExpenseChartViewModel @Inject constructor(
             entryOf(3f, week4Total.toFloat())
         )
         val labels = listOf("W1", "W2", "W3", "W4")
-
         return ChartData(entries, labels)
     }
 }
