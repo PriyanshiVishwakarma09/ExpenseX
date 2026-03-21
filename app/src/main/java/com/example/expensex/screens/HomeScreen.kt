@@ -55,7 +55,6 @@ fun HomeScreen(vm: HomeScreenViewModel) {
                 .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
                 .background(TopBgColor)
         )
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
