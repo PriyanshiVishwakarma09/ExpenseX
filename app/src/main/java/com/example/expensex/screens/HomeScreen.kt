@@ -66,7 +66,6 @@ fun HomeScreen(vm: HomeScreenViewModel) {
             BalanceCard(balance, income, expense)
             Spacer(modifier = Modifier.height(32.dp))
 
-
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 32.dp)
@@ -228,6 +227,8 @@ fun BalanceCard(balance: Double, income: Double, expense: Double) {
     }
 }
 
+
+
 @Composable
 fun SectionHeader(title: String, actionText: String) {
     Row(
@@ -251,8 +252,10 @@ fun SectionHeader(title: String, actionText: String) {
     }
 }
 
+
+
 @Composable
-fun TransactionRow(tx: TransactionEntity) {
+fun TransactionRow(tx: TransactionEntity){
     Row(
         modifier = Modifier
             .fillMaxWidth()
