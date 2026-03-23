@@ -54,6 +54,7 @@ fun ProfileScreen(
     var type by remember { mutableStateOf("EXPENSE") }
     var showKeypad by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
+    var showAddCategory by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -69,8 +70,8 @@ fun ProfileScreen(
         )
 
         Column(
-            modifier = Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxSize(),
+         //       .verticalScroll(rememberScrollState()),
 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -154,6 +155,8 @@ fun ProfileScreen(
             )
 
             Spacer(modifier = Modifier.height(40.dp))
+            Column(modifier = Modifier.fillMaxSize()
+                .verticalScroll(rememberScrollState())) {
 
             ProfileOptionRow(
                 icon = Icons.Default.ExitToApp,
@@ -168,88 +171,114 @@ fun ProfileScreen(
                     }
                 }
             )
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
+
+            ProfileOptionRow(
+                icon = Icons.Default.ExitToApp,
+                title = "Add Category",
+                onClick = {
+                    showAddCategory = !showAddCategory
+                }
+            )
+            if(showAddCategory) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        ,
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White
+                    )
                 ) {
-                    Text(
-                        text = "Add Category",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = title,
-                        onValueChange = { title = it },
-                        label = { Text("Category Name") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded }
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
+                        Text(
+                            text = "Add Category",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         OutlinedTextField(
-                            value = type,
-                            onValueChange = {},
-                            readOnly = true,
-                            label = { Text("Type") },
-                            modifier = Modifier.menuAnchor().fillMaxWidth()
+                            value = title,
+                            onValueChange = { title = it },
+                            label = { Text("Category Name") },
+                            modifier = Modifier.fillMaxWidth()
                         )
 
-                        ExposedDropdownMenu(
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        ExposedDropdownMenuBox(
                             expanded = expanded,
-                            onDismissRequest = { expanded = false }
+                            onExpandedChange = { expanded = !expanded }
                         ) {
-                            listOf("Income", "Expense").forEach { typeCat ->
-                                DropdownMenuItem(
-                                    text = { Text(typeCat) },
-                                    onClick = {
-                                        type = typeCat
-                                        expanded = false
-                                    }
-                                )
+                            OutlinedTextField(
+                                value = type,
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text("Type") },
+                                modifier = Modifier.menuAnchor().fillMaxWidth()
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                listOf("INCOME", "EXPENSE").forEach { typeCat ->
+                                    DropdownMenuItem(
+                                        text = { Text(typeCat) },
+                                        onClick = {
+                                            type = typeCat
+                                            expanded = false
+                                        }
+                                    )
+                                }
                             }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    Button(
-                        onClick = {
-                            if (title.isNotBlank()) {
-                                vmm.addCategories(title, type)
-                                title = ""
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Add Category")
+                        Button(
+                            onClick = {
+                                if (title.isNotBlank()) {
+                                    vmm.addCategories(title, type)
+                                    title = ""
+                                    showAddCategory = false
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = TealColor,
+                                contentColor = Color.White
+                            )
+                        ) {
+                            Text("Add Category")
+
+                        }
                     }
+                }
                 }
             }
         }
     }
 }
-
 @Composable
-fun ProfileOptionRow(icon: ImageVector, title: String,
-                     onClick: () -> Unit) {
+fun ProfileOptionRow(
+    icon: ImageVector,
+    title: String,
+    isActive: Boolean = false,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick()}
+            .background(
+                if (isActive) Color.Transparent else Color.White
+            )
+            .clickable { onClick() }
             .padding(horizontal = 24.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -263,7 +292,9 @@ fun ProfileOptionRow(icon: ImageVector, title: String,
                 tint = TealColor
             )
         }
+
         Spacer(modifier = Modifier.width(20.dp))
+
         Text(
             text = title,
             fontSize = 16.sp,

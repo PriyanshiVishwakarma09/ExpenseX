@@ -1,5 +1,9 @@
 package com.example.expensex.ui.viewmodel // Adjust to your package name
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.expensex.SessionManager
@@ -32,6 +36,9 @@ class ExpenseChartViewModel @Inject constructor(
 
     private val userId = sessionManager.getUid()
         ?: throw IllegalStateException("User not logged in")
+
+
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val chartData: StateFlow<ChartData> = _selectedPeriod.flatMapLatest { period ->

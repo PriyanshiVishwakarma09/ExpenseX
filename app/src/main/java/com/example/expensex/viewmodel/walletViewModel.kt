@@ -35,7 +35,6 @@ class WalletViewModel @Inject constructor(
     private val accountDao: AccountDao,
     private val session: SessionManager
 ) : ViewModel() {
-
     private val _uiEvent = MutableSharedFlow<String>()
     val uiEvent = _uiEvent.asSharedFlow()
 
@@ -103,29 +102,46 @@ class WalletViewModel @Inject constructor(
             val income = categoryDao.getCategories(uid, "INCOME").first()
             val expense = categoryDao.getCategories(uid, "EXPENSE").first()
 
-            if (income.isEmpty() && expense.isEmpty()) {
-                val defaults = listOf(
-                    CategoryEntity(userId = uid, name = "Salary", type = "INCOME"),
-                    CategoryEntity(userId = uid, name = "Business", type = "INCOME"),
-                    CategoryEntity(userId = uid, name = "Freelance", type = "INCOME"),
-                    CategoryEntity(userId = uid , name = "Others" , type = "INCOME"),
-                    CategoryEntity(userId = uid, name = "Food", type = "EXPENSE"),
-                    CategoryEntity(userId = uid, name = "Travel", type = "EXPENSE"),
-                    CategoryEntity(userId = uid, name = "Shopping", type = "EXPENSE"),
-                    CategoryEntity(userId = uid, name = "Bills", type = "EXPENSE"),
-                    CategoryEntity(userId = uid , name = "Rent" , type = "EXPENSE"),
-                    CategoryEntity(userId = uid , name = "Others" , type = "EXPENSE")
-                )
-                defaults.forEach { categoryDao.insert(it) }
+            val existingIncomeNames = income.map { it.name }
+            val existingExpenseNames = expense.map { it.name }
+
+            val incomeDefaults = listOf("Salary", "Business", "Freelance", "Others")
+            val expenseDefaults = listOf("Food", "Travel", "Shopping", "Bills", "Rent", "Others")
+
+            incomeDefaults.forEach { name ->
+                if (name !in existingIncomeNames) {
+                    categoryDao.insert(
+                        CategoryEntity(userId = uid, name = name, type = "INCOME")
+                    )
+                }
+            }
+
+            expenseDefaults.forEach { name ->
+                if (name !in existingExpenseNames) {
+                    categoryDao.insert(
+                        CategoryEntity(userId = uid, name = name, type = "EXPENSE")
+                    )
+                }
             }
         }
     }
 
+    //Log.d("DEBUG", "Category added: $title, $type")
     fun addCategories(title: String, type: String){
         viewModelScope.launch {
-           val cat =  CategoryEntity(userId = uid , name = title , type = type)
-            Log.d("DEBUG", "Category added: $title, $type")
-            repo.addCategory(cat)
+            val existing = categoryDao.getCategories(uid, type).first()
+
+            val alreadyExists = existing.any {
+                it.name.equals(title, ignoreCase = true)
+            }
+
+            if (alreadyExists) {
+                _uiEvent.emit("Category already exists")
+            } else {
+                val cat = CategoryEntity(userId = uid, name = title, type = type)
+                repo.addCategory(cat)
+                _uiEvent.emit("Category added")
+            }
         }
     }
 

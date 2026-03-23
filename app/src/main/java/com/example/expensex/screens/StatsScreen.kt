@@ -4,16 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Assessment
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,7 +23,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.expensex.model.Routes
 import com.example.expensex.ui.viewmodel.ExpenseChartViewModel
 import com.example.expensex.ui.viewmodel.TimePeriod
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -51,6 +45,7 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
     val chartData by viewModel.chartData.collectAsState()
     val BgLight = Color(0xFFF8F9FA)
     val modelProducer = remember { ChartEntryModelProducer() }
+    var budget by remember { mutableStateOf(" ") }
 
     LaunchedEffect(chartData) {
         if (chartData.entries.isNotEmpty()) {
@@ -64,7 +59,7 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .background(BgLight)
-    ) {
+    ){
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -105,7 +100,7 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                     ) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                "Monthly balance",
+                                "Monthly budget",
                                 color = Color.White.copy(alpha = 0.9f),
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium
@@ -117,7 +112,6 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                             tint = Color.White
                         )
                     }
-
                     Spacer(modifier = Modifier.height(150.dp))
                 }
             }
@@ -179,6 +173,7 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                         }
                     }
                 }
+
                 val lineSpec = LineChart.LineSpec(
                     lineColor = primaryTeal.toArgb(),
                     lineThicknessDp = 3f,
