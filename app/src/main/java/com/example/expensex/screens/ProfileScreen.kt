@@ -55,6 +55,11 @@ fun ProfileScreen(
     var showKeypad by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
     var showAddCategory by remember { mutableStateOf(false) }
+    val categories by vmm.categories.collectAsState()
+    LaunchedEffect(Unit) {
+        vmm.load("EXPENSE")
+    }
+    var showDeleteCategory by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -183,8 +188,7 @@ fun ProfileScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
-                        ,
+                        .padding(16.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = Color.White
@@ -257,8 +261,62 @@ fun ProfileScreen(
                         }
                     }
                 }
+
+            }
+                ProfileOptionRow(
+                    icon = Icons.Default.ExitToApp,
+                    title = "Delete Category",
+                    onClick = {
+                        showDeleteCategory = !showDeleteCategory
+                    }
+                )
+                if(showDeleteCategory){
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+
+                        Text(
+                            text = "Your Categories",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        categories.forEach { category ->
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 6.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(Color.White)
+                                    .padding(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+
+                                Text(
+                                    text = category.name,
+                                    modifier = Modifier.weight(1f)
+                                )
+
+                                Icon(
+                                    imageVector = Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    tint = Color.Red,
+                                    modifier = Modifier
+                                        .size(22.dp)
+                                        .clickable {
+                                            vmm.deleteCategory(category)
+                                        }
+                                )
+                            }
+                        }
+                    }
                 }
             }
+
         }
     }
 }

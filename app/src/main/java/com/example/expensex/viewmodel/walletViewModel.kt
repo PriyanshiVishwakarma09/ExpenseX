@@ -145,10 +145,9 @@ class WalletViewModel @Inject constructor(
         }
     }
 
-    fun deleteCategory(title: String, type: String){
+    fun deleteCategory(category: CategoryEntity) {
         viewModelScope.launch {
-            val cat = CategoryEntity(userId = uid , name = title , type = type)
-                repo.deleteCategory(cat)
+            repo.deleteCategory(category)
         }
     }
 }
