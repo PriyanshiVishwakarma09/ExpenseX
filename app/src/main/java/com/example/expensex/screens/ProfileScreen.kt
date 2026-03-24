@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
@@ -178,7 +179,7 @@ fun ProfileScreen(
             )
 
             ProfileOptionRow(
-                icon = Icons.Default.ExitToApp,
+                icon = Icons.Default.Add,
                 title = "Add Category",
                 onClick = {
                     showAddCategory = !showAddCategory
@@ -264,7 +265,7 @@ fun ProfileScreen(
 
             }
                 ProfileOptionRow(
-                    icon = Icons.Default.ExitToApp,
+                    icon = Icons.Default.Delete,
                     title = "Delete Category",
                     onClick = {
                         showDeleteCategory = !showDeleteCategory
@@ -316,7 +317,6 @@ fun ProfileScreen(
                     }
                 }
             }
-
         }
     }
 }

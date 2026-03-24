@@ -83,6 +83,15 @@ interface TransactionDao {
          ORDER BY timeLabel ASC
      """)
     fun getExpensesPerYear(uid : String) : Flow<List<TimePeriodSum>>
+
+
+    @Query("""
+    SELECT IFNULL(SUM(amount), 0.0) FROM transactions
+    WHERE type = 'EXPENSE'
+    AND strftime('%m', date / 1000, 'unixepoch') = :month
+    AND strftime('%Y', date / 1000, 'unixepoch') = :year
+""")
+    suspend fun getMonthlyExpenses(month: String, year: String): Double
 }
 
 data class CategorySum(

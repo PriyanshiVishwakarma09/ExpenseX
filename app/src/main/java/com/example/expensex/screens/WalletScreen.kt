@@ -141,12 +141,8 @@ fun AddTransactionScreen(
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
-
-                        Spacer(Modifier.height(20.dp))
-
                         FormLabel(text = "Category")
                         var expanded by remember { mutableStateOf(false) }
-
                         Box {
                             OutlinedTextField(
                                 value = selectedCategory?.name ?: "Select Category",
