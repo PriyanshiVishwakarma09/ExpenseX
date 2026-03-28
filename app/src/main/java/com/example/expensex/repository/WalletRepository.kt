@@ -9,6 +9,7 @@ import com.example.expensex.db.TransactionDao
 import com.example.expensex.db.TransactionEntity
 import com.example.expensex.db.UserDao
 import com.example.expensex.model.User
+import java.util.Date
 import javax.inject.Inject
 
 class WalletRepository @Inject constructor(
@@ -46,14 +47,15 @@ class WalletRepository @Inject constructor(
         title: String,
         amount: Double,
         accountId: Int,
-        categoryId: Int?
+        categoryId: Int?,
+        date: Long
     ) {
         val tx = TransactionEntity(
             userId = uid,
             title = title,
             amount = amount,
             type = "INCOME",
-            date = System.currentTimeMillis(),
+            date = date,
             accountId = accountId,
             categoryId = categoryId
         )
@@ -61,14 +63,13 @@ class WalletRepository @Inject constructor(
         accountDao.addBalance(accountId, amount)
     }
 
-
-
     suspend fun addExpense(
         uid: String,
         title: String,
         amount: Double,
         accountId: Int,
-        categoryId: Int
+        categoryId: Int,
+        date: Long
     ) {
 
         Log.d("DB", "INSERT CALLED: $title $amount $categoryId")
@@ -77,7 +78,7 @@ class WalletRepository @Inject constructor(
             title = title,
             amount = amount,
             type = "EXPENSE",
-            date = System.currentTimeMillis(),
+            date = date,
             accountId = accountId,
             categoryId = categoryId
         )

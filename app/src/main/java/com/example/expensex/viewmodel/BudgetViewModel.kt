@@ -8,7 +8,7 @@ import com.example.expensex.db.MonthlyBudget
 import com.example.expensex.db.TransactionDao
 import com.example.expensex.model.BudgetUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import java.util.Calendar
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

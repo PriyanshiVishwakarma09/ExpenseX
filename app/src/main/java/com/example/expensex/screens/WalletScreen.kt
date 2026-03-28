@@ -29,6 +29,7 @@ import com.example.expensex.viewmodel.WalletViewModel
 val TealColor = Color(0xFF3B978F)
 val BgLightColor = Color(0xFFF8F9FA)
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionScreen(
     vm: WalletViewModel,
@@ -38,6 +39,13 @@ fun AddTransactionScreen(
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf<CategoryEntity?>(null) }
+    var selectedDate by remember { mutableStateOf(System.currentTimeMillis()) }
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    fun formatDate(millis: Long): String {
+        val formatter = java.text.SimpleDateFormat("dd MM yyyy" , java.util.Locale.getDefault())
+        return formatter.format(java.util.Date(millis))
+    }
 
     LaunchedEffect(Unit) {
         vm.ensureDefaultCategories()
@@ -63,7 +71,7 @@ fun AddTransactionScreen(
             .verticalScroll(rememberScrollState())
     ) {
         Box(
-            modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxSize()
         ) {
             Box(
                 modifier = Modifier
@@ -130,7 +138,7 @@ fun AddTransactionScreen(
                             shape = RoundedCornerShape(12.dp),
                             singleLine = true,
                             leadingIcon = {
-                                Text("$ ", color = TealColor, fontWeight = FontWeight.Bold)
+                                Text(" ", color = TealColor, fontWeight = FontWeight.Bold)
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,
@@ -141,6 +149,38 @@ fun AddTransactionScreen(
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
+                        Spacer(Modifier.height(20.dp))
+
+                        FormLabel(text = "Date")
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showDatePicker = true }
+                        ) {
+                            OutlinedTextField(
+                                value = formatDate(selectedDate),
+                                onValueChange = {},
+                                readOnly = true,
+                                enabled = false,
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                trailingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.ArrowDropDown,
+                                        contentDescription = null,
+                                        tint = Color.Gray
+                                    )
+                                },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = TealColor,
+                                    unfocusedBorderColor = Color(0xFFE0E0E0),
+                                    disabledBorderColor = Color(0xFFE0E0E0)
+                                )
+                            )
+                        }
+
+                        Spacer(Modifier.height(20.dp))
+
                         FormLabel(text = "Category")
                         var expanded by remember { mutableStateOf(false) }
                         Box {
@@ -186,11 +226,12 @@ fun AddTransactionScreen(
                         Button(
                             onClick = {
                                 val amt = amount.toDoubleOrNull() ?: return@Button
+                                val date = selectedDate
                                 if (type == "INCOME") {
-                                    vm.addIncome(title, amt, selectedCategory?.id)
+                                    vm.addIncome(title, amt, selectedCategory?.id, date)
                                 } else {
                                     val catId = selectedCategory?.id ?: return@Button
-                                    vm.addExpense(title, amt, catId)
+                                    vm.addExpense(title, amt, catId, date)
                                 }
                                 title = ""
                                 amount = ""
@@ -207,6 +248,30 @@ fun AddTransactionScreen(
             }
         }
     }
+    if(showDatePicker){
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate
+        )
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    selectedDate = datePickerState.selectedDateMillis ?: selectedDate
+                    showDatePicker = false
+                } , colors = ButtonDefaults.buttonColors(TealColor)) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false } , colors = ButtonDefaults.buttonColors(
+                    TealColor)) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 }
 
 @Composable
@@ -218,7 +283,6 @@ fun FormLabel(text: String) {
         letterSpacing = 1.sp)
     Spacer(modifier = Modifier.height(8.dp))
 }
-
 
 @Composable
 fun TransactionTypeToggle(selectedType: String, onTypeSelected: (String) -> Unit) {

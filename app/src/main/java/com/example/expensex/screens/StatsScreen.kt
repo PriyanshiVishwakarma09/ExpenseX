@@ -9,10 +9,19 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,8 +32,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.expensex.model.BudgetUiState
 import com.example.expensex.ui.viewmodel.ExpenseChartViewModel
 import com.example.expensex.ui.viewmodel.TimePeriod
+import com.example.expensex.viewmodel.BudgetStatus
+import com.example.expensex.viewmodel.BudgetViewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
@@ -112,7 +125,9 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                             tint = Color.White
                         )
                     }
-                    Spacer(modifier = Modifier.height(150.dp))
+                }
+                Column {
+                    BudgetSection()
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
@@ -201,7 +216,6 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                                     rawLabel
                                 }
                             }
-
                             TimePeriod.Year -> {
                                 try {
                                     Month.of(rawLabel.toInt())
@@ -210,12 +224,11 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                                     rawLabel
                                 }
                             }
-
                             else -> rawLabel
                         }
                     }
                 if (chartData.entries.isNotEmpty()) {
-                    Chart(
+                    Chart (
                         chart = lineChart(
                             lines = listOf(lineSpec),
                             spacing = 44.dp
@@ -236,5 +249,156 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
             }
         }
     }
+}
 
+
+@Composable
+fun BudgetCard(
+    state: BudgetUiState,
+    status: BudgetStatus,
+    onSetBudgetClick: () -> Unit,
+    onDeleteClick: () -> Unit
+) {
+    val progressColor = when (status) {
+        BudgetStatus.SAFE -> Color(0xFF4CAF50)
+        BudgetStatus.WARNING -> Color(0xFFFFC107)
+        BudgetStatus.DANGER -> Color(0xFFF44336)
+    }
+    val primaryTeal = Color(0xFF4F9A94)
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = RoundedCornerShape(16.dp)
+
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            if (!state.hasBudget) {
+                Text("No budget set")
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(onClick = onSetBudgetClick ,
+                    colors = ButtonDefaults.buttonColors(containerColor = primaryTeal)
+                    ) {
+                    Text("Set Budget")
+                }
+
+                return@Column
+            }
+
+            Text(
+                text = "₹${state.spentAmount.toInt()} / ₹${state.budgetAmount.toInt()}",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LinearProgressIndicator(
+                progress = state.progress,
+                color = progressColor,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = if (state.isExceeded)
+                    "Exceeded by ₹${state.exceededAmount.toInt()}"
+                else
+                    "Remaining ₹${state.remainingAmount.toInt()}",
+                color = progressColor
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TextButton(onClick = onSetBudgetClick) {
+                    Text("Edit")
+                }
+                TextButton(onClick = onDeleteClick) {
+                    Text("Delete", color = Color.Red)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SetBudgetDialog(
+    onDismiss: () -> Unit,
+    onSave: (Double) -> Unit
+) {
+    var amount by remember { mutableStateOf("") }
+    val primaryTeal = Color(0xFF4F9A94)
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(onClick = {
+                onSave(amount.toDoubleOrNull() ?: 0.0)
+            },
+                colors = ButtonDefaults.buttonColors(containerColor = primaryTeal)
+            ) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss , colors = ButtonDefaults.buttonColors(containerColor = primaryTeal)) {
+                Text("Cancel")
+            }
+        },
+        title = { Text("Set Monthly Budget") },
+        text = {
+            OutlinedTextField(
+                value = amount,
+                onValueChange = { amount = it },
+                label = { Text("Amount") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = primaryTeal,
+                    unfocusedBorderColor = Color.Gray,
+                    focusedLabelColor = primaryTeal,
+                    unfocusedLabelColor = Color.Gray,
+                    cursorColor = primaryTeal,
+                    focusedTextColor = Color.Black,
+                    unfocusedTextColor = Color.Black
+                )
+            )
+        }
+    )
+}
+
+@Composable
+fun BudgetSection(
+    viewModel: BudgetViewModel = hiltViewModel()
+) {
+    val state by viewModel.uiState.collectAsState()
+
+    val status = viewModel.getBudgetStatus(state.progress)
+
+    var showDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        viewModel.loadBudget()
+    }
+
+    if (showDialog) {
+        SetBudgetDialog(
+            onDismiss = { showDialog = false },
+            onSave = {
+                viewModel.setBudget(it)
+                showDialog = false
+            }
+        )
+    }
+    BudgetCard(
+        state = state,
+        status = status,
+        onSetBudgetClick = { showDialog = true },
+        onDeleteClick = { viewModel.deleteBudget() }
+    )
 }

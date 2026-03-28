@@ -5,6 +5,7 @@ import com.example.expensex.db.ExpenseDatabase
 import dagger.Module
 import dagger.Provides
 import android.content.Context
+import com.example.expensex.db.BudgetDao
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -25,6 +26,10 @@ object DatabaseModule {
             .build()
     }
 
+    @Provides
+    fun provideBudgetDao(db: ExpenseDatabase): BudgetDao {
+        return db.budgetDao()
+    }
     @Provides fun provideUserDao(db: ExpenseDatabase) = db.userDao()
     @Provides fun provideAccountDao(db: ExpenseDatabase) = db.accountDao()
     @Provides fun provideCategoryDao(db: ExpenseDatabase) = db.categoryDao()

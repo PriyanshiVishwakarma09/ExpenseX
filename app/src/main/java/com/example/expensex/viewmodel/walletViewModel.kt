@@ -69,18 +69,17 @@ class WalletViewModel @Inject constructor(
         _type.value = type
     }
 
-    fun addIncome(title: String, amount: Double, categoryId: Int?) {
+    fun addIncome(title: String, amount: Double, categoryId: Int?, date: Long) {
         viewModelScope.launch {
-            val account = repo.getMainAccount(uid)
-                ?: return@launch
+            val account = repo.getMainAccount(uid) ?: return@launch
 
-            repo.addIncome(uid, title, amount, account.id, categoryId)
+            repo.addIncome(uid, title, amount, account.id, categoryId, date)
             _uiEvent.emit("Transaction added successfully")
             load("INCOME")
         }
     }
 
-    fun addExpense(title: String, amount: Double, categoryId: Int) {
+    fun addExpense(title: String, amount: Double, categoryId: Int, date: Long) {
         viewModelScope.launch {
             val uid = session.getUid() ?: return@launch
             Log.d("VM", "Add expense clicked")
@@ -91,7 +90,7 @@ class WalletViewModel @Inject constructor(
                 Log.d("VM", "❌ Account is NULL — exiting")
                 return@launch
             }
-            repo.addExpense(uid, title, amount, account.id, categoryId)
+            repo.addExpense(uid, title, amount, account.id, categoryId, date)
             _uiEvent.emit("Transaction added successfully")
             load("EXPENSE")
         }
