@@ -66,6 +66,7 @@ fun ProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(BgLightColor)
+            //.statusBarsPadding()
     ) {
         Box(
             modifier = Modifier
@@ -182,88 +183,81 @@ fun ProfileScreen(
                 icon = Icons.Default.Add,
                 title = "Add Category",
                 onClick = {
-                    showAddCategory = !showAddCategory
+                    showAddCategory = true
                 }
             )
-            if(showAddCategory) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = "Add Category",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        OutlinedTextField(
-                            value = title,
-                            onValueChange = { title = it },
-                            label = { Text("Category Name") },
-                            modifier = Modifier.fillMaxWidth()
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = { expanded = !expanded }
-                        ) {
-                            OutlinedTextField(
-                                value = type,
-                                onValueChange = {},
-                                readOnly = true,
-                                label = { Text("Type") },
-                                modifier = Modifier.menuAnchor().fillMaxWidth()
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false }
+                if (showAddCategory) {
+                    AlertDialog(
+                        onDismissRequest = { showAddCategory = false },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    if (title.isNotBlank()) {
+                                        vmm.addCategories(title, type)
+                                        title = ""
+                                        showAddCategory = false
+                                    }
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = TealColor,
+                                    contentColor = Color.White
+                                )
                             ) {
-                                listOf("INCOME", "EXPENSE").forEach { typeCat ->
-                                    DropdownMenuItem(
-                                        text = { Text(typeCat) },
-                                        onClick = {
-                                            type = typeCat
-                                            expanded = false
-                                        }
+                                Text("Add")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(
+                                onClick = { showAddCategory = false }
+                            ) {
+                                Text("Cancel")
+                            }
+                        },
+                        title = {
+                            Text("Add Category")
+                        },
+                        text = {
+                            Column {
+                                OutlinedTextField(
+                                    value = title,
+                                    onValueChange = { title = it },
+                                    label = { Text("Category Name") },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                ExposedDropdownMenuBox(
+                                    expanded = expanded,
+                                    onExpandedChange = { expanded = !expanded }
+                                ) {
+                                    OutlinedTextField(
+                                        value = type,
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        label = { Text("Type") },
+                                        modifier = Modifier.menuAnchor().fillMaxWidth()
                                     )
+
+                                    ExposedDropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        listOf("INCOME", "EXPENSE").forEach { typeCat ->
+                                            DropdownMenuItem(
+                                                text = { Text(typeCat) },
+                                                onClick = {
+                                                    type = typeCat
+                                                    expanded = false
+                                                }
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(
-                            onClick = {
-                                if (title.isNotBlank()) {
-                                    vmm.addCategories(title, type)
-                                    title = ""
-                                    showAddCategory = false
-                                }
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = TealColor,
-                                contentColor = Color.White
-                            )
-                        ) {
-                            Text("Add Category")
-
-                        }
-                    }
+                    )
                 }
-
-            }
                 ProfileOptionRow(
                     icon = Icons.Default.Delete,
                     title = "Delete Category",

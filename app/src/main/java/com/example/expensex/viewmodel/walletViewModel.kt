@@ -96,6 +96,7 @@ class WalletViewModel @Inject constructor(
         }
     }
 
+
     fun ensureDefaultCategories() {
         viewModelScope.launch {
             val income = categoryDao.getCategories(uid, "INCOME").first()

@@ -54,6 +54,7 @@ fun HomeScreen(vm: HomeScreenViewModel) {
                 .height(280.dp)
                 .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
                 .background(TopBgColor)
+             //   .statusBarsPadding()
         )
         Column(
             modifier = Modifier
@@ -295,7 +296,6 @@ fun TransactionRow(tx: TransactionEntity){
                 )
             }
         }
-
         Text(
             text = (if (tx.type == "INCOME") "+ $ " else "- $ ") + "${"%,.2f".format(tx.amount)}",
             color = if (tx.type == "INCOME") TextGreen else TextRed,

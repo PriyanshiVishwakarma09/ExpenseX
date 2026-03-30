@@ -67,6 +67,7 @@ fun AddTransactionScreen(
     Column(
         modifier = Modifier
             .background(BgLightColor)
+          //  .statusBarsPadding()
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
     ) {

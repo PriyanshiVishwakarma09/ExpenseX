@@ -85,8 +85,6 @@ class WalletRepository @Inject constructor(
         transactionDao.insert(tx)
         accountDao.subtractBalance(accountId, amount)
     }
-
-
     fun getCategories(uid: String, type: String) =
         categoryDao.getCategories(uid, type)
 

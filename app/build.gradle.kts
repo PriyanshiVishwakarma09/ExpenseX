@@ -95,4 +95,7 @@ dependencies {
     implementation("com.patrykandpatrick.vico:compose:$vicoVersion")
     implementation("com.patrykandpatrick.vico:compose-m3:$vicoVersion") // For Material 3 styling
     implementation("com.patrykandpatrick.vico:core:$vicoVersion")
+
+
+    implementation ("com.google.accompanist:accompanist-systemuicontroller:0.32.0")
 }

@@ -72,6 +72,7 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .background(BgLight)
+        //    .statusBarsPadding()
     ){
         Box(
             modifier = Modifier

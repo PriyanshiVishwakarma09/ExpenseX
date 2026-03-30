@@ -10,6 +10,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +23,7 @@ import com.example.expensex.screens.*
 import com.example.expensex.ui.viewmodel.ExpenseChartViewModel
 import com.example.expensex.viewmodel.HomeScreenViewModel
 import com.example.expensex.viewmodel.WalletViewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 val TealColor = Color(0xFF3B978F)
 
@@ -29,9 +32,17 @@ fun MainScaffold(
     uid: String,
     homeVm: HomeScreenViewModel,
     navController: NavController
-) {
+){
     val innerNavController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = Color.Transparent,
+            darkIcons = false
+        )
+    }
 
     Scaffold(
         bottomBar = { BottomBar(innerNavController) },
@@ -100,11 +111,12 @@ fun BottomBar(navController: NavController) {
 
         BottomAppBar(
             containerColor = Color.White,
-            contentColor = Color.Gray,
-            tonalElevation = 8.dp,
-            contentPadding = PaddingValues(horizontal = 24.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
+            tonalElevation = 0.dp,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 10.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .shadow(12.dp)
+        ){
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -178,11 +190,12 @@ fun BottomBar(navController: NavController) {
             shape = CircleShape,
             containerColor = TealColor,
             contentColor = Color.White,
+            elevation = FloatingActionButtonDefaults.elevation(12.dp),
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .offset(y = (-32).dp)
+                .align(Alignment.Center)
+                .offset(y = (-36).dp)
                 .size(64.dp)
-        ) {
+        ){
             Icon(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add",
