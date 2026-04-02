@@ -22,6 +22,7 @@ import com.example.expensex.model.Routes
 import com.example.expensex.screens.*
 import com.example.expensex.ui.viewmodel.ExpenseChartViewModel
 import com.example.expensex.viewmodel.HomeScreenViewModel
+import com.example.expensex.viewmodel.TransactionViewModel
 import com.example.expensex.viewmodel.WalletViewModel
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -70,11 +71,8 @@ fun MainScaffold(
             }
 
             composable(Routes.WALLET) {
-                val vm: WalletViewModel = hiltViewModel()
-                AddTransactionScreen(
-                    vm = vm,
-                    snackbarHostState = snackbarHostState
-                )
+                val vm: TransactionViewModel = hiltViewModel()
+                TransactionScreen(vm)
             }
 
             composable(Routes.STATS) {

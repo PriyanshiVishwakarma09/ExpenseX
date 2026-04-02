@@ -92,6 +92,13 @@ interface TransactionDao {
     AND strftime('%Y', date / 1000, 'unixepoch') = :year
 """)
     suspend fun getMonthlyExpenses(month: String, year: String): Double
+
+    @Query("""
+    SELECT * FROM transactions
+    WHERE userId = :uid
+    ORDER BY date DESC
+""")
+    fun getAllTransactions(uid: String): Flow<List<TransactionEntity>>
 }
 
 data class CategorySum(
