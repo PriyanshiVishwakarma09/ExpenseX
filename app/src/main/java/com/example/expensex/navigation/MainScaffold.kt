@@ -67,7 +67,7 @@ fun MainScaffold(
         ) {
 
             composable(Routes.HOME) {
-                HomeScreen(homeVm)
+                HomeScreen(homeVm , innerNavController)
             }
 
             composable(Routes.WALLET) {

@@ -1,6 +1,7 @@
 package com.example.expensex.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +28,8 @@ import com.example.expensex.db.TransactionEntity
 import com.example.expensex.viewmodel.HomeScreenViewModel
 import java.text.SimpleDateFormat
 import androidx.compose.ui.text.TextStyle
+import androidx.navigation.NavController
+import com.example.expensex.model.Routes
 import java.util.Date
 import java.util.Locale
 
@@ -37,7 +40,7 @@ val TextRed = Color(0xFFF95B51)
 val BgLight = Color(0xFFF8F9FA)
 
 @Composable
-fun HomeScreen(vm: HomeScreenViewModel) {
+fun HomeScreen(vm: HomeScreenViewModel ,  navController: NavController) {
     val balance by vm.balance.collectAsState()
     val income by vm.income.collectAsState()
     val expense by vm.expense.collectAsState()
@@ -54,12 +57,11 @@ fun HomeScreen(vm: HomeScreenViewModel) {
                 .height(280.dp)
                 .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
                 .background(TopBgColor)
-             //   .statusBarsPadding()
+
         )
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                //.verticalScroll(rememberScrollState())
                 .padding(top = 40.dp)
         ) {
             TopHeaderRow(username)
@@ -72,10 +74,15 @@ fun HomeScreen(vm: HomeScreenViewModel) {
                 contentPadding = PaddingValues(bottom = 32.dp)
             ) {
                 item {
-                    SectionHeader("Transactions History", "See all")
+                    SectionHeader(
+                        "Transactions History",
+                        "See all",
+                        onClick = {
+                            navController.navigate(Routes.WALLET)
+                        }
+                    )
                     Spacer(modifier = Modifier.height(12.dp))
                 }
-
                 items(recent) { tx ->
                     TransactionRow(tx)
                 }
@@ -94,7 +101,6 @@ fun TopHeaderRow(username : String) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
-
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = username,
@@ -116,7 +122,6 @@ fun TopHeaderRow(username : String) {
                 contentDescription = "Notifications",
                 tint = Color.White
             )
-            // Orange dot indicator could go here in a tiny Box
         }
     }
 }
@@ -231,28 +236,29 @@ fun BalanceCard(balance: Double, income: Double, expense: Double) {
 
 
 @Composable
-fun SectionHeader(title: String, actionText: String) {
+fun SectionHeader(
+    title: String,
+    actionText: String,
+    onClick: () -> Unit
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+        modifier = Modifier.fillMaxWidth()
+            .padding(8.dp),
+
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = title,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            color = Color.Black
+            text = title
         )
         Text(
-            text = actionText,
-            color = Color.Gray,
-            fontSize = 14.sp
+            text = actionText, color = Color(0xFF3B978F),
+            modifier = Modifier
+                .clickable { onClick() }
+                .padding(4.dp)
         )
     }
 }
-
 
 
 @Composable

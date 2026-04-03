@@ -292,13 +292,13 @@ fun TransactionTypeToggle(selectedType: String, onTypeSelected: (String) -> Unit
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
-            modifier = Modifier.weight(1f).clip(RoundedCornerShape(20.dp)).background(if (selectedType == "EXPENSE") Color.White else Color.Transparent).clickable { onTypeSelected("EXPENSE") }.padding(vertical = 12.dp),
+            modifier = Modifier.weight(1f).clip(RoundedCornerShape(20.dp)).background(if (selectedType == "EXPENSE") TealColor else Color.Transparent).clickable { onTypeSelected("EXPENSE") }.padding(vertical = 12.dp),
             contentAlignment = Alignment.Center
-        ) { Text("Expense", color = if (selectedType == "EXPENSE") Color.Black else Color.Gray, fontWeight = if (selectedType == "EXPENSE") FontWeight.SemiBold else FontWeight.Medium) }
+        ) { Text("Expense", color = if (selectedType == "EXPENSE") Color.White else Color.Gray, fontWeight = if (selectedType == "EXPENSE") FontWeight.SemiBold else FontWeight.Medium) }
 
         Box(
-            modifier = Modifier.weight(1f).clip(RoundedCornerShape(20.dp)).background(if (selectedType == "INCOME") Color.White else Color.Transparent).clickable { onTypeSelected("INCOME") }.padding(vertical = 12.dp),
+            modifier = Modifier.weight(1f).clip(RoundedCornerShape(20.dp)).background(if (selectedType == "INCOME") TealColor else Color.Transparent).clickable { onTypeSelected("INCOME") }.padding(vertical = 12.dp),
             contentAlignment = Alignment.Center
-        ) { Text("Income", color = if (selectedType == "INCOME") Color.Black else Color.Gray, fontWeight = if (selectedType == "INCOME") FontWeight.SemiBold else FontWeight.Medium) }
+        ) { Text("Income", color = if (selectedType == "INCOME") Color.White else Color.Gray, fontWeight = if (selectedType == "INCOME") FontWeight.SemiBold else FontWeight.Medium) }
     }
 }
