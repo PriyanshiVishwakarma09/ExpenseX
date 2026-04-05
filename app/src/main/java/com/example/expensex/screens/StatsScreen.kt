@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.patrykandpatrick.vico.compose.component.textComponent
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -238,6 +239,9 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                         chartModelProducer = modelProducer,
                         bottomAxis = rememberBottomAxis(
                             valueFormatter = bottomAxisFormatter,
+                            label = textComponent(
+                                color = Color.Black
+                            ),
                             guideline = null,
                             tickLength = 0.dp
                         ),

@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.filled.Delete
@@ -46,10 +47,11 @@ fun TransactionScreen(viewModel: TransactionViewModel , vm: WalletViewModel) {
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFFF8F9FB))
+            .fillMaxSize()
+            .background(Color.White)
             .padding(16.dp)
     ) {
+        Spacer(modifier = Modifier.height(4.dp))
         TransactionToggle(
             selected = selectedFilter,
             onSelected = { viewModel.setFilter(it) }

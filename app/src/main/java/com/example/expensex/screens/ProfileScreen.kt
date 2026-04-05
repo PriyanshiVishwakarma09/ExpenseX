@@ -75,11 +75,9 @@ fun ProfileScreen(
                 .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
                 .background(TealColor)
         )
-
         Column(
             modifier = Modifier.fillMaxSize(),
          //       .verticalScroll(rememberScrollState()),
-
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(

@@ -64,7 +64,7 @@ fun MainScaffold(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-               // .background(TealColor)
+             //   .background(Color.White)
         ) {
 
             Box(
@@ -127,7 +127,7 @@ fun MainScaffold(
                 containerColor = Color.White,
                 tonalElevation = 0.dp,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .fillMaxWidth()
                     .clip(RoundedCornerShape(24.dp))
                     .shadow(12.dp)
             ) {

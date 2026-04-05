@@ -121,6 +121,8 @@ fun AddTransactionScreen(
                             singleLine = true,
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = TealColor,
+                                focusedTextColor = Color.Black,
+                              //  unfocusedTextColor = Color.Black,
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
@@ -147,6 +149,8 @@ fun AddTransactionScreen(
                             ),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = TealColor,
+                                focusedTextColor = Color.Black,
+                               // unfocusedTextColor = Color.Black,
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
@@ -174,6 +178,8 @@ fun AddTransactionScreen(
                                 },
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = TealColor,
+                                    focusedTextColor = Color.Black,
+                                //    unfocusedTextColor = Color.Black,
                                     unfocusedBorderColor = Color(0xFFE0E0E0),
                                     disabledBorderColor = Color(0xFFE0E0E0)
                                 )
@@ -246,6 +252,8 @@ fun AddTransactionScreen(
                         }
                     }
                 }
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

@@ -99,6 +99,8 @@ fun LoginScreen(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = TealColor,
+                                focusedTextColor = Color.Black,
+                              //  unfocusedTextColor = Color.Black,
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
@@ -117,6 +119,8 @@ fun LoginScreen(
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                             colors = OutlinedTextFieldDefaults.colors(
                                 focusedBorderColor = TealColor,
+                                focusedTextColor = Color.Black,
+                               // unfocusedTextColor = Color.Black,
                                 unfocusedBorderColor = Color(0xFFE0E0E0)
                             )
                         )
