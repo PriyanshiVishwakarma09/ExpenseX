@@ -324,7 +324,7 @@ fun AutoResizedText(
 
     Text(
         text = text,
-        color = if (color != Color.Unspecified) color else style.color, // And this line
+        color = if (color != Color.Unspecified) color else style.color,
         modifier = modifier.drawWithContent {
             if (shouldDraw) {
                 drawContent()

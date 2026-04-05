@@ -17,8 +17,9 @@ interface AccountDao {
     @Query("UPDATE account SET balance = balance + :amount Where id = :accountId")
     suspend fun addBalance(accountId : Int , amount : Double)
 
-    //subtract expense
     @Query("UPDATE account SET balance = balance - :amount WHere id = :accountId")
     suspend fun subtractBalance(accountId: Int , amount: Double)
+
+
 
 }

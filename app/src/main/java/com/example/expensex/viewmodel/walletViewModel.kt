@@ -12,6 +12,7 @@ import com.example.expensex.db.AccountDao
 import com.example.expensex.db.CategoryDao
 import com.example.expensex.db.CategoryEntity
 import com.example.expensex.db.TransactionDao
+import com.example.expensex.db.TransactionEntity
 import com.example.expensex.repository.WalletRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -142,6 +143,12 @@ class WalletViewModel @Inject constructor(
                 repo.addCategory(cat)
                 _uiEvent.emit("Category added")
             }
+        }
+    }
+
+    fun deleteTransaction(tx: TransactionEntity) {
+        viewModelScope.launch {
+            repo.deleteTransaction(tx)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.expensex.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,7 +34,7 @@ fun MainScaffold(
     uid: String,
     homeVm: HomeScreenViewModel,
     navController: NavController
-){
+) {
     val innerNavController = rememberNavController()
     val snackbarHostState = remember { SnackbarHostState() }
     val systemUiController = rememberSystemUiController()
@@ -60,145 +61,160 @@ fun MainScaffold(
         }
     ) { padding ->
 
-        NavHost(
-            navController = innerNavController,
-            startDestination = Routes.HOME,
-            modifier = Modifier.padding(padding)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+               // .background(TealColor)
         ) {
 
-            composable(Routes.HOME) {
-                HomeScreen(homeVm , innerNavController)
-            }
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(WindowInsets.statusBars.asPaddingValues().calculateTopPadding())
+                    .background(TealColor)
+                    .align(Alignment.TopCenter)
+            )
 
-            composable(Routes.WALLET) {
-                val vm: TransactionViewModel = hiltViewModel()
-                TransactionScreen(vm)
-            }
+            NavHost(
+                navController = innerNavController,
+                startDestination = Routes.HOME,
+                modifier = Modifier.padding(padding)
+            ) {
+                composable(Routes.HOME) {
+                    HomeScreen(homeVm, innerNavController)
+                }
 
-            composable(Routes.STATS) {
-                val viewModel: ExpenseChartViewModel = hiltViewModel()
-                ExpenseTrackerScreen(viewModel)
-            }
+                composable(Routes.WALLET) {
+                    val vm: TransactionViewModel = hiltViewModel()
+                    val vmm: WalletViewModel = hiltViewModel()
+                    TransactionScreen(vm , vmm)
+                }
 
-            composable(Routes.PROFILE) {
+                composable(Routes.STATS) {
+                    val viewModel: ExpenseChartViewModel = hiltViewModel()
+                    ExpenseTrackerScreen(viewModel)
+                }
+
+                composable(Routes.PROFILE) {
                     val vm: WalletViewModel = hiltViewModel()
-                    ProfileScreen(homeVm , vm , navController = navController)
+                    ProfileScreen(homeVm, vm, navController = navController)
 
+                }
+
+                composable(Routes.ADD) {
+                    AddTransactionScreen(
+                        vm = hiltViewModel(),
+                        snackbarHostState = snackbarHostState
+                    )
+                }
+            }
+        }
+    }
+}
+
+    @Composable
+    fun BottomBar(navController: NavController) {
+
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+
+            BottomAppBar(
+                containerColor = Color.White,
+                tonalElevation = 0.dp,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .shadow(12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    IconButton(onClick = {
+                        navController.navigate(Routes.HOME) {
+                            popUpTo(Routes.HOME)
+                            launchSingleTop = true
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (currentRoute == Routes.HOME) Icons.Filled.Home else Icons.Outlined.Home,
+                            contentDescription = "Home",
+                            tint = if (currentRoute == Routes.HOME) TealColor else Color.Gray,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        navController.navigate(Routes.STATS) {
+                            popUpTo(Routes.STATS)
+                            launchSingleTop = true
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Assessment,
+                            contentDescription = "Stats",
+                            tint = if (currentRoute == Routes.STATS) TealColor else Color.Gray,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    IconButton(onClick = {
+                        navController.navigate(Routes.WALLET) {
+                            popUpTo(Routes.WALLET)
+                            launchSingleTop = true
+                        }
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.AccountBalanceWallet,
+                            contentDescription = "Wallet",
+                            tint = if (currentRoute == Routes.WALLET) TealColor else Color.Gray,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        navController.navigate(Routes.PROFILE) {
+                            popUpTo(Routes.PROFILE)
+                            launchSingleTop = true
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (currentRoute == Routes.PROFILE) Icons.Filled.Person else Icons.Outlined.Person,
+                            contentDescription = "Profile",
+                            tint = if (currentRoute == Routes.PROFILE) TealColor else Color.Gray,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
             }
 
-            composable(Routes.ADD) {
-                AddTransactionScreen(
-                    vm = hiltViewModel(),
-                    snackbarHostState = snackbarHostState
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Routes.ADD)
+                },
+                shape = CircleShape,
+                containerColor = TealColor,
+                contentColor = Color.White,
+                elevation = FloatingActionButtonDefaults.elevation(12.dp),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(y = (-36).dp)
+                    .size(64.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add",
+                    modifier = Modifier.size(32.dp)
                 )
             }
         }
     }
-}
-
-@Composable
-fun BottomBar(navController: NavController) {
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-
-        BottomAppBar(
-            containerColor = Color.White,
-            tonalElevation = 0.dp,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .clip(RoundedCornerShape(24.dp))
-                .shadow(12.dp)
-        ){
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-
-                IconButton(onClick = {
-                    navController.navigate(Routes.HOME) {
-                        popUpTo(Routes.HOME)
-                        launchSingleTop = true
-                    }
-                }) {
-                    Icon(
-                        imageVector = if (currentRoute == Routes.HOME) Icons.Filled.Home else Icons.Outlined.Home,
-                        contentDescription = "Home",
-                        tint = if (currentRoute == Routes.HOME) TealColor else Color.Gray,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                IconButton(onClick = {
-                    navController.navigate(Routes.STATS) {
-                        popUpTo(Routes.STATS)
-                        launchSingleTop = true
-                    }
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Assessment,
-                        contentDescription = "Stats",
-                        tint = if (currentRoute == Routes.STATS) TealColor else Color.Gray,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                IconButton(onClick = {
-                    navController.navigate(Routes.WALLET) {
-                        popUpTo(Routes.WALLET)
-                        launchSingleTop = true
-                    }
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.AccountBalanceWallet,
-                        contentDescription = "Wallet",
-                        tint = if (currentRoute == Routes.WALLET) TealColor else Color.Gray,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-
-                IconButton(onClick = {
-                    navController.navigate(Routes.PROFILE) {
-                        popUpTo(Routes.PROFILE)
-                        launchSingleTop = true
-                    }
-                }) {
-                    Icon(
-                        imageVector = if (currentRoute == Routes.PROFILE) Icons.Filled.Person else Icons.Outlined.Person,
-                        contentDescription = "Profile",
-                        tint = if (currentRoute == Routes.PROFILE) TealColor else Color.Gray,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
-            }
-        }
-
-        FloatingActionButton(
-            onClick = {
-                navController.navigate(Routes.ADD)
-            },
-            shape = CircleShape,
-            containerColor = TealColor,
-            contentColor = Color.White,
-            elevation = FloatingActionButtonDefaults.elevation(12.dp),
-            modifier = Modifier
-                .align(Alignment.Center)
-                .offset(y = (-36).dp)
-                .size(64.dp)
-        ){
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add",
-                modifier = Modifier.size(32.dp)
-            )
-        }
-    }
-}

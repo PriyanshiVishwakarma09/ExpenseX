@@ -160,7 +160,7 @@ fun AddTransactionScreen(
                         ) {
                             OutlinedTextField(
                                 value = formatDate(selectedDate),
-                                onValueChange = {},
+                                onValueChange = {it},
                                 readOnly = true,
                                 enabled = false,
                                 modifier = Modifier.fillMaxWidth(),

@@ -131,6 +131,7 @@ fun ExpenseTrackerScreen(viewModel: ExpenseChartViewModel) {
                     BudgetSection()
                 }
             }
+
             Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier

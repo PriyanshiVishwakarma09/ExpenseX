@@ -25,4 +25,7 @@ interface BudgetDao{
 
     @Delete
     suspend fun deleteBudget(budget: MonthlyBudget)
+
+    @Query("SELECT * FROM monthly_budget WHERE Id = :uid LIMIT 1")
+    suspend fun getCurrentBudgetOnce(uid: String): MonthlyBudget?
 }

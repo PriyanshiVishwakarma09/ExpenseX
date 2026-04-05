@@ -85,6 +85,18 @@ class WalletRepository @Inject constructor(
         transactionDao.insert(tx)
         accountDao.subtractBalance(accountId, amount)
     }
+
+
+    suspend fun deleteTransaction(tx : TransactionEntity) {
+        if(tx.type == "INCOME") {
+            accountDao.subtractBalance(tx.accountId , tx.amount)
+        }
+        else if (tx.type == "EXPENSE"){
+            accountDao.addBalance(tx.accountId , tx.amount)
+        }
+
+        transactionDao.delete(tx)
+    }
     fun getCategories(uid: String, type: String) =
         categoryDao.getCategories(uid, type)
 

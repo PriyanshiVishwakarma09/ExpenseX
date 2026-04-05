@@ -1,6 +1,7 @@
 package com.example.expensex.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.example.expensex.model.TimePeriodSum
@@ -99,6 +100,14 @@ interface TransactionDao {
     ORDER BY date DESC
 """)
     fun getAllTransactions(uid: String): Flow<List<TransactionEntity>>
+
+    @Delete
+    suspend fun delete(transaction: TransactionEntity)
+
+
+    @Query("SELECT SUM(amount) FROM transactions WHERE userId = :uid AND type = 'EXPENSE'")
+    suspend fun getMonthlyExpenseOnce(uid: String): Double?
+
 }
 
 data class CategorySum(

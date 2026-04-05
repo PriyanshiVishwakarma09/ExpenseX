@@ -1,0 +1,18 @@
+package com.example.expensex.module
+
+import androidx.work.WorkerFactory
+import androidx.hilt.work.HiltWorkerFactory
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class WorkerModule {
+
+    @Binds
+    abstract fun bindWorkerFactory(
+        factory: HiltWorkerFactory
+    ): WorkerFactory
+}

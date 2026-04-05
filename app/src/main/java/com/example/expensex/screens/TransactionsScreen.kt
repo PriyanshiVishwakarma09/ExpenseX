@@ -32,9 +32,15 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import com.example.expensex.viewmodel.WalletViewModel
 
 @Composable
-fun TransactionScreen(viewModel: TransactionViewModel) {
+fun TransactionScreen(viewModel: TransactionViewModel , vm: WalletViewModel) {
     val transactions by viewModel.filteredTransactions.collectAsState()
     val selectedFilter by viewModel.filter.collectAsState()
 
@@ -48,14 +54,12 @@ fun TransactionScreen(viewModel: TransactionViewModel) {
             selected = selectedFilter,
             onSelected = { viewModel.setFilter(it) }
         )
-
         Spacer(modifier = Modifier.height(16.dp))
-
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(transactions) { tx ->
-                TransactionItem(tx)
+                TransactionItem(tx , vm)
             }
         }
     }
@@ -74,6 +78,12 @@ fun TransactionToggle(
         FilterButton("Income", FilterType.INCOME, selected, onSelected)
         FilterButton("Expense", FilterType.EXPENSE, selected, onSelected)
     }
+    Spacer(modifier = Modifier.padding(6.dp))
+    Divider(
+        color = Color(0xFFE0E0E0),
+        thickness = 0.8.dp,
+        modifier = Modifier.padding(start = 4.dp)
+    )
 }
 
     @Composable
@@ -85,7 +95,6 @@ fun TransactionToggle(
     ) {
         val isSelected = type == selected
         val TealColor = Color(0xFF3B978F)
-
         Text(
             text = text,
             modifier = Modifier
@@ -98,54 +107,58 @@ fun TransactionToggle(
     }
 
 @Composable
-fun TransactionItem(tx: TransactionEntity) {
+fun TransactionItem(tx: TransactionEntity , vm: WalletViewModel) {
     val formattedDate = SimpleDateFormat(
-        "dd MMM yyyy, hh:mm a",
+        "MMM dd, yyyy",
         Locale.getDefault()
     ).format(Date(tx.date))
-
     val isIncome = tx.type == "INCOME"
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp, horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Box(
             modifier = Modifier
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(Color(0xFFE57373)),
+                .background(Color(0xFFE0F2F1)),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = tx.title.take(2).uppercase(),
-                color = Color.White
+            Icon(
+                imageVector = Icons.Default.AccountBalanceWallet,
+                contentDescription = null,
+                tint = Color(0xFF3B978F)
             )
         }
-
         Spacer(modifier = Modifier.width(12.dp))
         Column(
             modifier = Modifier.weight(1f)
         ) {
-            Text(
-                text = tx.title,
-                color = Color.Black
-            )
+            Text(text = tx.title, color = Color.Black)
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Text(
-                text = formattedDate,
-                color = Color.Gray
-            )
+            Text(text = formattedDate, color = Color.Gray)
         }
         Text(
             text = (if (isIncome) "+ ₹" else "- ₹") + tx.amount,
             color = if (isIncome) Color(0xFF2E7D32) else Color(0xFFC62828)
         )
+        Spacer(modifier = Modifier.width(8.dp))
+        IconButton(
+            onClick = { vm.deleteTransaction(tx) }
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
+                tint = Color.Red
+            )
+        }
     }
+
     Divider(
         color = Color(0xFFE0E0E0),
         thickness = 0.8.dp,
