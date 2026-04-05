@@ -36,7 +36,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController){
     LaunchedEffect(true){
-        delay(2000)
+        delay(1000)
         val currentUser = FirebaseAuth.getInstance().currentUser
         if(currentUser != null){
             navController.navigate("${Routes.HOME}/${currentUser.uid}") {
@@ -52,50 +52,16 @@ fun SplashScreen(navController: NavController){
         }
     }
     Column(modifier = Modifier.fillMaxSize()
-        .background(color = Color(0xFFE3F2FD))) {
+        .background(color = Color.White),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Image(
-                painter = painterResource(id = R.drawable.expense),
+                painter = painterResource(id = R.drawable.expensexlogo),
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
             )
-        }
-        Column(modifier = Modifier.fillMaxWidth()
-            .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("Spend Smarter" , fontSize = 30.sp , color = Color.Blue ,
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                ))
-            Text("Save More" , fontSize = 30.sp , color = Color.Blue ,
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                ))
-            Spacer(modifier = Modifier.height(18.dp))
-            Button(onClick = {} ,
-                modifier = Modifier.fillMaxWidth(0.8f)
-                    .height(55.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF0D47A1),
-                    contentColor = Color.White
-                )) {
-                    Text("Get Started" , fontSize = 18.sp ,
-                        style = MaterialTheme.typography.headlineMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 1.sp
-                        )
-                    )
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text("Already have an account ?" , fontSize = 14.sp ,
-                style = MaterialTheme.typography.headlineMedium.copy(
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = 1.sp
-                ))
         }
     }
 }

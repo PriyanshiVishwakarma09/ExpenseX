@@ -13,6 +13,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import android.util.Log
+import androidx.compose.ui.graphics.Color
 import androidx.core.app.NotificationCompat
 import com.example.expensex.R
 import java.time.LocalDate
@@ -78,6 +79,7 @@ class BudgetWorker @AssistedInject constructor(
                 .setContentText(msg)
                 // 🚨 Use your own app icon here
                 .setSmallIcon(R.mipmap.ic_launcher)
+                //.setColor(Color.parseColor("#3B978F"))
                 .build()
 
             manager.notify(System.currentTimeMillis().toInt(), notification)

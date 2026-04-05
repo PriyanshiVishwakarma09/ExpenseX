@@ -41,7 +41,7 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
 
-    Scaffold(containerColor = BgLightColor) { padding ->
+    Scaffold(containerColor = TealColor) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
 
             Box(
