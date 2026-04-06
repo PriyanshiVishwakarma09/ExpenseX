@@ -1,7 +1,7 @@
-<h1 align="center">💰 Expense & Budget Tracker</h1>
+<h1 align="center">💰 ExpenseX</h1>
 
 <p align="center">
-  <i>A robust, offline-first Android application built with Jetpack Compose to seamlessly manage personal finances, track daily transactions, and monitor budget limits. Designed and developed as a comprehensive internship project.</i>
+  <i>A robust, offline-first Android application built with Jetpack Compose to seamlessly manage personal finances, track daily transactions, and monitor budget limits. Designed and developed as a comprehensive internship project focusing on a clean, product-first mobile experience.</i>
 </p>
 
 ---
@@ -20,21 +20,21 @@
 
 ## 🚀 Core Features & Technical Highlights
 
-### 1. 🔐 Firebase Integration (Authentication & Cloud Sync)
-* **Secure Auth:** User registration and login managed via Firebase Authentication.
-* **Data Resilience:** User profiles, custom categories, and transaction histories are synced to Firebase Cloud Firestore/Realtime Database, ensuring seamless cross-device accessibility and preventing data loss.
+### 1. 🎯 Smart Budget Tracker (Goal / Challenge Feature)
+* **Monthly Limit Challenge:** To make financial tracking engaging, users can set a strict monthly spending goal. The app dynamically tracks progress, acting as a "no-spend" awareness challenge.
+* **Instant Alerts (WorkManager):** Triggers Android Local Notifications immediately if a new expense pushes the total spending over the defined budget limit.
 
-### 2. 🗄️ Offline-First Architecture (Room Database)
-* **Local Caching:** All transactions and budget limits are persisted locally using Room. The app is fully functional without an active internet connection.
-* **Reactive UI:** The application relies on a Single Source of Truth. The UI observes the local Room database via Kotlin `Flow`, resulting in zero-latency UI updates while network syncs happen asynchronously in the background.
+### 2. 🗄️ Offline-First Architecture (Data Handling)
+* **Local Storage (Room SQLite):** All transactions and limits are persisted locally for a lightning-fast, zero-latency experience that works perfectly in airplane mode.
+* **Cloud Sync (Firebase):** In the background, data is securely synced to Firebase Cloud Firestore and Authentication, ensuring seamless cross-device accessibility and data recovery.
 
-### 3. ⏰ Smart Notifications (WorkManager)
-* **Instant Budget Alerts:** Triggers Android Local Notifications immediately if a new expense pushes the total monthly spending over the user's defined budget limit.
-* **Predictive Rate Monitoring:** Utilizes Android `WorkManager` to run daily background health checks. It calculates the current daily spending rate and alerts the user proactively if they are on track to exhaust their budget before the month ends.
+### 3. 📊 Insights & Data Visualization (Vico Graphs)
+* **Interactive Analytics:** Integrates the performant [Vico UI library](https://patrykandpatrick.com/vico) to transform raw data into a smooth, interactive line chart.
+* **Trend Analysis:** Users can filter their spending trajectory by Week, Month, and Year to gain actionable financial insights and understand their spending patterns on a small screen.
 
-### 4. 📊 Data Visualization (Vico Graphs)
-* **Interactive Analytics:** Integrates the performant [Vico UI library](https://patrykandpatrick.com/vico) to render smooth, dynamic line charts.
-* **Trend Analysis:** Users can filter their spending trajectory by Week, Month, and Year to gain actionable financial insights.
+### 4. 📱 Smooth Mobile UX & Responsiveness
+* **Product Thinking:** Designed specifically for mobile with thumb-friendly navigation, clean form design, and clear visual hierarchies (Green for income, Red for expenses).
+* **State Management:** Handles loading states, error handling in forms, and graceful empty states when no transactions exist. UI observes the database via Kotlin `Flow` for reactive updates.
 
 ---
 
@@ -42,7 +42,7 @@
 
 * **Language:** Kotlin
 * **UI Framework:** Jetpack Compose / Material Design 3
-* **Architecture:** MVVM (Model-View-ViewModel)
+* **Architecture:** MVVM (Model-View-ViewModel) + Clean Architecture
 * **Local Database:** Room Database
 * **Dependency Injection:** Hilt / Dagger
 * **Backend & Auth:** Firebase
@@ -53,9 +53,9 @@
 
 ## 📱 Screen-by-Screen Breakdown
 
-* **Dashboard:** Central hub displaying Total Balance, Income, Expenses, and a quick-glance list of recent transactions.
-* **Add Transaction:** Intuitive form to log Expenses or Income. Includes amount, date picker, and a dynamic category dropdown.
-* **Transaction History:** Comprehensive list view with filter tabs (All / Income / Expense). Supports seamless swipe-to-delete functionality which automatically recalculates balances.
+* **Dashboard:** Central hub displaying a glanceable summary: Total Balance, Income, Expenses, and a quick list of recent transactions.
+* **Add Transaction:** Intuitive data entry flow to log Expenses or Income. Includes amount, date picker, notes, and a dynamic category dropdown.
+* **Transaction History:** Comprehensive CRUD (Create, Read, Update, Delete) management. Includes categorized filter tabs and seamless swipe-to-delete functionality.
 * **Analytics & Budget:** Visually tracks spending against a strictly defined monthly limit. Highlights overspent amounts in red and plots data on interactive line graphs.
 * **Profile & Settings:** Custom category management system (Add/Delete custom tags like "Freelance" or "Pet Supplies") and secure Firebase logout.
 
