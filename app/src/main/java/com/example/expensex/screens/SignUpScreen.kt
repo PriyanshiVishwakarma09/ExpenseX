@@ -146,7 +146,7 @@ fun RegisterScreen(
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 TextButton(onClick = onNavigateToLogin){
-                    Text("Already have an account? Login", color = TealColor, fontWeight = FontWeight.SemiBold)
+                    Text("Already have an account? Login", color = Color.White, fontWeight = FontWeight.SemiBold)
                 }
             }
         }

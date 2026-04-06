@@ -43,7 +43,6 @@ fun LoginScreen(
 
     Scaffold(containerColor = TealColor) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -51,7 +50,6 @@ fun LoginScreen(
                     .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
                     .background(TealColor)
             )
-
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -156,7 +154,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(300.dp))
 
                 TextButton(onClick = onNavigateToRegister) {
-                    Text("Don't have an account? Sign Up", color = TealColor, fontWeight = FontWeight.SemiBold)
+                    Text("Don't have an account? Sign Up", color = Color.White, fontWeight = FontWeight.SemiBold)
                 }
             }
         }

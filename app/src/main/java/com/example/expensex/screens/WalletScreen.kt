@@ -43,7 +43,7 @@ fun AddTransactionScreen(
     var showDatePicker by remember { mutableStateOf(false) }
 
     fun formatDate(millis: Long): String {
-        val formatter = java.text.SimpleDateFormat("dd MM yyyy" , java.util.Locale.getDefault())
+        val formatter = java.text.SimpleDateFormat("dd-MM-yyyy" , java.util.Locale.getDefault())
         return formatter.format(java.util.Date(millis))
     }
 
@@ -141,7 +141,7 @@ fun AddTransactionScreen(
                             shape = RoundedCornerShape(12.dp),
                             singleLine = true,
                             leadingIcon = {
-                                Text(" ", color = TealColor, fontWeight = FontWeight.Bold)
+                                Text("$", color = TealColor, fontWeight = FontWeight.Bold)
                             },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Number,

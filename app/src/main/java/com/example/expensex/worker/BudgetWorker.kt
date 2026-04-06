@@ -33,7 +33,7 @@ class BudgetWorker @AssistedInject constructor(
 
         val uid = session.getUid() ?: return Result.success()
         val currentDate = LocalDate.now()
-        val currentMonth = currentDate.monthValue // Example: April = 4
+        val currentMonth = currentDate.monthValue
         val currentYear = currentDate.year
 
         // 2. Use your existing getBudget function with the current date
