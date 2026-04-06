@@ -1,8 +1,20 @@
-<h1 align="center">💰 ExpenseX</h1>
+<h1 align="center">💰 ExpenseX: Personal Finance Companion</h1>
 
 <p align="center">
   <i>A robust, offline-first Android application built with Jetpack Compose to seamlessly manage personal finances, track daily transactions, and monitor budget limits. Designed and developed as a comprehensive internship project focusing on a clean, product-first mobile experience.</i>
 </p>
+
+<p align="center">
+  <b><a href="https://drive.google.com/file/d/1pMsoLWvU3nwsTBe-YNSTNyCd6EGTRCbX/view?usp=drivesdk">🎥 Watch the Live Demo Video</a></b> 
+  
+</p>
+
+<p align="center">
+   <b><a href="https://drive.google.com/drive/folders/1BFCOU5xNdn7jMvjPRx-ePzXCF7rRvHNw?usp=drive_link">📱 Download APK</a></b>
+  
+</p>
+ 
+
 
 ---
 
@@ -20,21 +32,28 @@
 
 ## 🚀 Core Features & Technical Highlights
 
-### 1. 🎯 Smart Budget Tracker (Goal / Challenge Feature)
-* **Monthly Limit Challenge:** To make financial tracking engaging, users can set a strict monthly spending goal. The app dynamically tracks progress, acting as a "no-spend" awareness challenge.
-* **Instant Alerts (WorkManager):** Triggers Android Local Notifications immediately if a new expense pushes the total spending over the defined budget limit.
+### 1. 🔔 Smart & Proactive Notifications (WorkManager)
+* **Immediate Budget Alerts:** The app actively monitors every transaction in real-time. If a newly added expense breaches the user's predefined monthly budget limit, it instantly fires a local Android Notification to warn the user of overspending.
+* **Daily Burn-Rate Checks:** Utilizing Android's `WorkManager`, the app performs intelligent background checks. It calculates the current daily spending velocity and pushes a proactive alert if the user is on track to exhaust their funds before the month ends.
 
-### 2. 🗄️ Offline-First Architecture (Data Handling)
-* **Local Storage (Room SQLite):** All transactions and limits are persisted locally for a lightning-fast, zero-latency experience that works perfectly in airplane mode.
-* **Cloud Sync (Firebase):** In the background, data is securely synced to Firebase Cloud Firestore and Authentication, ensuring seamless cross-device accessibility and data recovery.
+### 2. 🔐 Authentication & Session Management
+* **Secure Auth & Sync:** User registration and login are managed via Firebase Authentication. Profiles and transaction histories are synced to Firebase Cloud Firestore for cross-device accessibility.
+* **Persistent Sessions (Session Manager):** Implements a local Session Manager to securely persist login states. Returning users bypass the login screen entirely, ensuring immediate access to their dashboard.
 
-### 3. 📊 Insights & Data Visualization (Vico Graphs)
-* **Interactive Analytics:** Integrates the performant [Vico UI library](https://patrykandpatrick.com/vico) to transform raw data into a smooth, interactive line chart.
-* **Trend Analysis:** Users can filter their spending trajectory by Week, Month, and Year to gain actionable financial insights and understand their spending patterns on a small screen.
+### 3. 🎯 Smart Budget Tracker (Goal / Challenge Feature)
+* **Monthly Limit Challenge:** To make financial tracking engaging, users can set a strict monthly spending goal. The app dynamically tracks progress, acting as a soft "no-spend" awareness challenge deeply integrated into the analytics view.
 
-### 4. 📱 Smooth Mobile UX & Responsiveness
+### 4. 🗄️ Offline-First Architecture (Data Handling)
+* **Local Storage (Room SQLite):** All transactions and limits are persisted locally for a lightning-fast, zero-latency experience that works perfectly even in airplane mode. The app writes to Room first, then syncs to Firebase silently in the background.
+
+### 5. 📊 Insights & Data Visualization (Vico Graphs)
+* **Interactive Analytics:** Integrates the performant [Vico UI library](https://patrykandpatrick.com/vico) to transform raw data into smooth, interactive line charts.
+* **Trend Analysis:** Users can filter their spending trajectory by Week, Month, and Year to gain actionable financial insights and easily identify spending peaks.
+
+### 6. 📱 Smooth Mobile UX & Responsiveness
+* **Instant Visual Feedback:** Utilizes Material Design **Snackbars** to provide immediate, non-intrusive confirmation whenever a transaction is successfully saved or deleted.
 * **Product Thinking:** Designed specifically for mobile with thumb-friendly navigation, clean form design, and clear visual hierarchies (Green for income, Red for expenses).
-* **State Management:** Handles loading states, error handling in forms, and graceful empty states when no transactions exist. UI observes the database via Kotlin `Flow` for reactive updates.
+* **State Management:** Handles loading states, error handling in forms, and graceful empty states when no transactions exist. The UI observes the database via Kotlin `Flow` for reactive, flicker-free updates.
 
 ---
 
@@ -67,7 +86,7 @@
 com.example.expensetracker
 │
 ├── data
-│   ├── local         # Room Database, DAOs, Entities
+│   ├── local         # Room Database, DAOs, Entities, SessionManager
 │   ├── remote        # Firebase interactions
 │   └── repository    # Single source of truth repository implementation
 │
@@ -78,7 +97,7 @@ com.example.expensetracker
 │   └── usecase       # Business logic (e.g., CalculateBudgetStatusUseCase)
 │
 ├── ui
-│   ├── components    # Reusable Compose widgets (Buttons, Cards, Graph)
+│   ├── components    # Reusable Compose widgets (Buttons, Cards, Graph, Snackbars)
 │   ├── screens       # Main UI screens (Dashboard, Analytics, Profile)
 │   └── theme         # Typography, Colors, and Shapes
 │
@@ -91,7 +110,7 @@ com.example.expensetracker
 Clone the repository to your local machine:
 
 Bash
-git clone [https://github.com/your-username/expense-tracker.git](https://github.com/your-username/expense-tracker.git)
+git clone [https://github.com/your-username/expense-tracker.git](https://github.com/PriyanshiVishwakarma09/ExpenseX.git)
 Open the project in Android Studio.
 
 Ensure you have added your google-services.json file to the app/ directory to connect to your Firebase instance.
